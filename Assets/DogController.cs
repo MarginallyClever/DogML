@@ -5,137 +5,164 @@ using Unity.MLAgents;
 using Unity.MLAgents.Sensors;
 using Unity.MLAgents.Actuators;
 
+/**
+ * Uses Unity ml-agents: https://github.com/Unity-Technologies/ml-agents
+ * 1. Activate python virtual environment.  c:\Users\aggra\documents\github\dogml> venv\Scripts\activate
+ * 2. Run learn script: (venv) c:\Users\aggra\documents\github\dogml> mlagents-learn
+ * @author Dan Royer
+ * @since 2022-06-15
+ */
 public class DogController : Agent {
     public GameObject dog;
-
     private GameObject dogCopy;
-    private Rigidbody Torso;
-    private CharacterJoint RightFrontShoulder;
-    private CharacterJoint RightFrontThigh;
-    private CharacterJoint RightFrontCalf;
-    private FootContact RightFrontFoot;
-    private CharacterJoint RightBackShoulder;
-    private CharacterJoint RightBackThigh;
-    private CharacterJoint RightBackCalf;
-    private FootContact RightBackFoot;
-    private CharacterJoint LeftFrontShoulder;
-    private CharacterJoint LeftFrontThigh;
-    private CharacterJoint LeftFrontCalf;
-    private FootContact LeftFrontFoot;
-    private CharacterJoint LeftBackShoulder;
-    private CharacterJoint LeftBackThigh;
-    private CharacterJoint LeftBackCalf;
-    private FootContact LeftBackFoot;
-    private CharacterJoint Neck;
-    private CharacterJoint Head;
+
+    private ArticulationBody Torso;
+    private ArticulationBody Neck;
+    private ArticulationBody Head;
+
+    class DogLeg {
+        public ArticulationBody Shoulder;
+        public ArticulationBody Thigh;
+        public ArticulationBody Calf;
+        public FootContact Foot;
+    };
+
+    class JointLimit {
+        public int bodyIndex;
+        public float lower;
+        public float upper;
+    };
+
+    private DogLeg[] legs = new DogLeg[4];
 
     private float startTime;
 
-    private void Start() {}
+    private List<float> jointTargets = new List<float>();
+    private List<int> jointIndexes = new List<int>();
+    private List<JointLimit> limits = new List<JointLimit>();
 
-    public override void OnEpisodeBegin() {
-        if (dogCopy != null) Destroy(dogCopy);
-        dogCopy = GameObject.Instantiate(dog);
+    private void Start() {
+        for (int i = 0; i < legs.Length; ++i) {
+            legs[i] = new DogLeg();
+        }
 
-        Torso = GameObject.Find("Torso").GetComponent<Rigidbody>();
-        
-        RightFrontShoulder = Torso.transform.Find("ShoulderRF").GetComponent<CharacterJoint>();
-        RightFrontThigh = RightFrontShoulder.transform.Find("Thigh Model").GetComponent<CharacterJoint>();
-        RightFrontCalf = RightFrontThigh.transform.Find("Calf Model").GetComponent<CharacterJoint>();
-        RightFrontFoot = RightFrontCalf.transform.Find("Foot Model").GetComponent<FootContact>();
-
-        RightBackShoulder = Torso.transform.Find("ShoulderRB").GetComponent<CharacterJoint>();
-        RightBackThigh = RightBackShoulder.transform.Find("Thigh Model").GetComponent<CharacterJoint>();
-        RightBackCalf = RightBackThigh.transform.Find("Calf Model").GetComponent<CharacterJoint>();
-        RightBackFoot = RightBackCalf.transform.Find("Foot Model").GetComponent<FootContact>();
-
-        LeftFrontShoulder = Torso.transform.Find("ShoulderLF").GetComponent<CharacterJoint>();
-        LeftFrontThigh = LeftFrontShoulder.transform.Find("Thigh Model").GetComponent<CharacterJoint>();
-        LeftFrontCalf = LeftFrontThigh.transform.Find("Calf Model").GetComponent<CharacterJoint>();
-        LeftFrontFoot = LeftFrontCalf.transform.Find("Foot Model").GetComponent<FootContact>();
-
-        LeftBackShoulder = Torso.transform.Find("ShoulderLB").GetComponent<CharacterJoint>();
-        LeftBackThigh = LeftBackShoulder.transform.Find("Thigh Model").GetComponent<CharacterJoint>();
-        LeftBackCalf = LeftBackThigh.transform.Find("Calf Model").GetComponent<CharacterJoint>();
-        LeftBackFoot = LeftBackCalf.transform.Find("Foot Model").GetComponent<FootContact>();
-
-        Neck = Torso.transform.Find("Neck").GetComponent<CharacterJoint>();
-        Head = Neck.transform.Find("Head").GetComponent<CharacterJoint>();
-        startTime = Time.time;
-
-        base.OnEpisodeBegin();
+        Torso = dog.transform.Find("Torso").GetComponent<ArticulationBody>();
+        Torso.GetDriveTargets(jointTargets);
+        //Debug.Log("list = " + string.Join(", ", jointTargets));
+        Torso.GetDofStartIndices(jointIndexes);
+        //Debug.Log("indexes = " + string.Join(", ", jointIndexes));
     }
 
+    public override void OnEpisodeBegin() {
+        dog.SetActive(false);
+
+        Debug.Log("Episode " + this.CompletedEpisodes);
+        if (dogCopy != null) Destroy(dogCopy);
+        dogCopy = Instantiate(dog);
+        dogCopy.SetActive(true);
+
+
+        Torso = dogCopy.transform.Find("Torso").GetComponent<ArticulationBody>();
+        if (Torso == null) Debug.LogError("no torso model found.");
+
+        Torso.transform.Rotate(new Vector3(
+            Random.Range(-180, 180),
+            Random.Range(-180, 180),
+            Random.Range(-180, 180)));
+
+        legs[0].Shoulder = Torso.transform.Find("ShoulderRF").GetComponent<ArticulationBody>();
+        legs[1].Shoulder = Torso.transform.Find("ShoulderRB").GetComponent<ArticulationBody>();
+        legs[2].Shoulder = Torso.transform.Find("ShoulderLF").GetComponent<ArticulationBody>();
+        legs[3].Shoulder = Torso.transform.Find("ShoulderLB").GetComponent<ArticulationBody>();
+
+        for (int i = 0; i < legs.Length; ++i) {
+            legs[i].Thigh = legs[i].Shoulder.transform.Find("Thigh").GetComponent<ArticulationBody>();
+            legs[i].Calf = legs[i].Thigh.transform.Find("Calf").GetComponent<ArticulationBody>();
+            legs[i].Foot = legs[i].Calf.transform.Find("Foot/Foot Model").GetComponent<FootContact>();
+            //if (legs[i].Shoulder == null) Debug.LogError("Shoulder " + i + " not found.");
+            //if (legs[i].Thigh    == null) Debug.LogError("Thigh " + i + " not found.");
+            //if (legs[i].Calf     == null) Debug.LogError("Calf " + i + " not found.");
+            //if (legs[i].Foot     == null) Debug.LogError("Foot " + i + " not found.");
+            //Debug.Log("Shoulder " + i + " dof = " + legs[i].Shoulder.dofCount);
+            //Debug.Log("Thigh " + i + " dof = " + legs[i].Thigh.dofCount);
+            //Debug.Log("Calf " + i + " dof = " + legs[i].Calf.dofCount);
+        }
+
+        Neck = Torso.transform.Find("Neck").GetComponent<ArticulationBody>();
+        Head = Neck.transform.Find("Head").GetComponent<ArticulationBody>();
+        //Debug.Log("Neck dof = " + Neck.dofCount);
+        //Debug.Log("Head dof = " + Head.dofCount);
+
+        FindLimits();
+        //Debug.Log("limits = " + string.Join(", ", limits));
+
+        startTime = Time.time;
+    }
+
+    private void FindLimits() {
+        for (int i = 0; i < legs.Length; ++i) {
+            FindLimits(legs[i].Shoulder);
+            FindLimits(legs[i].Thigh);
+            FindLimits(legs[i].Calf);
+        }
+    }
+
+    private void FindLimits(ArticulationBody body) {
+        JointLimit lim = new JointLimit();
+        lim.lower = body.xDrive.lowerLimit;
+        lim.upper = body.xDrive.upperLimit;
+        lim.bodyIndex = body.index;
+        limits.Add(lim);
+    }
+
+    private float GetFacingUp() {
+        return Torso.transform.up.y;
+    }
+
+    private float GetHeight() {
+        return Torso.transform.position.y;
+    }
+    
     public override void CollectObservations(VectorSensor sensor) {
-        // range 0...1
-        float facingUp = (1 + Vector3.Dot(Torso.transform.up, new Vector3(0, 1, 0))) / 2.0f;
+        for (int i = 0; i < legs.Length; ++i) {
+            sensor.AddObservation(legs[i].Shoulder.jointPosition[0]);
+            sensor.AddObservation(legs[i].Thigh.jointPosition[0]);
+            sensor.AddObservation(legs[i].Calf.jointPosition[0]);
+            sensor.AddObservation(legs[i].Foot.inContact ? 1 : 0);
+        }
 
-        // range 0... almost 1.  dog floating off floor at 3.66
-        float height = Torso.position.y;
-        if (height > 3.5) EndEpisode();
-        if (Time.time - startTime > 5) EndEpisode();
-
-        float rewardAmount = facingUp * height;
-        SetReward(rewardAmount);
-
-        sensor.AddObservation(RightFrontShoulder.transform.eulerAngles);
-        sensor.AddObservation(RightFrontThigh.transform.eulerAngles);
-        sensor.AddObservation(RightFrontCalf.transform.eulerAngles);
-        sensor.AddObservation(RightFrontFoot.inContact ? 1 : 0);
-
-        sensor.AddObservation(LeftFrontShoulder.transform.eulerAngles);
-        sensor.AddObservation(LeftFrontThigh.transform.eulerAngles);
-        sensor.AddObservation(LeftFrontCalf.transform.eulerAngles);
-        sensor.AddObservation(LeftFrontFoot.inContact ? 1 : 0);
-
-        sensor.AddObservation(RightBackShoulder.transform.eulerAngles);
-        sensor.AddObservation(RightBackThigh.transform.eulerAngles);
-        sensor.AddObservation(RightBackCalf.transform.eulerAngles);
-        sensor.AddObservation(RightBackFoot.inContact ? 1 : 0);
-
-        sensor.AddObservation(LeftBackShoulder.transform.eulerAngles);
-        sensor.AddObservation(LeftBackThigh.transform.eulerAngles);
-        sensor.AddObservation(LeftBackCalf.transform.eulerAngles);
-        sensor.AddObservation(LeftBackFoot.inContact? 1 : 0);
-
-        sensor.AddObservation(rewardAmount);
-        sensor.AddObservation(facingUp);
-        sensor.AddObservation(height);
-
-        base.CollectObservations(sensor);
+        sensor.AddObservation(GetFacingUp());
+        sensor.AddObservation(GetHeight());
     }
         
     public override void OnActionReceived(ActionBuffers actions) {
+        //Debug.Log("first = " + actions.ContinuousActions[0]);
 
-        int index = 0;
-        AddRelativeForce(RightFrontShoulder, new Vector3(actions.ContinuousActions[index++]*2-1, 0, 0), ForceMode.Force);
-        AddRelativeForce(RightFrontThigh   , new Vector3(actions.ContinuousActions[index++]*2-1, 0, 0), ForceMode.Force);
-        AddRelativeForce(RightFrontCalf    , new Vector3(actions.ContinuousActions[index++]*2-1, 0, 0), ForceMode.Force);
-        AddRelativeForce(LeftFrontShoulder , new Vector3(actions.ContinuousActions[index++]*2-1, 0, 0), ForceMode.Force);
-        AddRelativeForce(LeftFrontThigh    , new Vector3(actions.ContinuousActions[index++]*2-1, 0, 0), ForceMode.Force);
-        AddRelativeForce(LeftFrontCalf     , new Vector3(actions.ContinuousActions[index++]*2-1, 0, 0), ForceMode.Force);
-        AddRelativeForce(RightBackShoulder , new Vector3(actions.ContinuousActions[index++]*2-1, 0, 0), ForceMode.Force);
-        AddRelativeForce(RightBackThigh    , new Vector3(actions.ContinuousActions[index++]*2-1, 0, 0), ForceMode.Force);
-        AddRelativeForce(RightBackCalf     , new Vector3(actions.ContinuousActions[index++]*2-1, 0, 0), ForceMode.Force);
-        AddRelativeForce(LeftBackShoulder  , new Vector3(actions.ContinuousActions[index++]*2-1, 0, 0), ForceMode.Force);
-        AddRelativeForce(LeftBackThigh     , new Vector3(actions.ContinuousActions[index++]*2-1, 0, 0), ForceMode.Force);
-        AddRelativeForce(LeftBackCalf      , new Vector3(actions.ContinuousActions[index++]*2-1, 0, 0), ForceMode.Force);
+        int least = Mathf.Min(actions.ContinuousActions.Length, jointTargets.Count);
+        for (int i = 0; i < least; ++i) {
+            JointLimit lim = limits[i];
+            int index = jointIndexes[lim.bodyIndex];
+            float f = jointTargets[index] + actions.ContinuousActions[i]*10f-5f;
+            jointTargets[index] = Mathf.Max(Mathf.Min(f, lim.upper), lim.lower);
+        }
 
-        base.OnActionReceived(actions);
+        Torso.SetDriveTargets(jointTargets);
     }
 
     // Update is called once per frame
     void FixedUpdate() {
         // (GameObject.Find("Torso Model")).GetComponent<Rigidbody>().AddForce(new Vector3(0,5,0), ForceMode.Impulse);
-    }
 
-    private void AddRelativeForce(CharacterJoint joint,Vector3 force,ForceMode mode = default) {
-        Rigidbody rb = joint.GetComponent<Rigidbody>();
-        rb.AddRelativeTorque(force, mode);
-    }
+        // range -1...1
+        //AddReward(GetFacingUp());
 
-    private void AddForce(CharacterJoint joint, Vector3 force, ForceMode mode = default) {
-        Rigidbody rb = joint.GetComponent<Rigidbody>();
-        rb.AddForce(force, mode);
+        // range 0... almost 1.  dog floating off floor at 3.66
+        //AddReward(GetHeight());
+
+        AddReward(Torso.velocity.x);
+
+        if(Time.time - startTime > 30) {
+            EndEpisode();
+        }
     }
 }
