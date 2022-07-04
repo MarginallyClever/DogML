@@ -14,6 +14,12 @@ you can open the sample scene in Unity.
 
 I used a thin/tall body instead of a wide/flat body because I believe it will be better at self-righting when it has a lower center of gravity.
 
+## To run
+
+- Enter the python virtual environment: `~\dogml> venv\Scripts\activate`
+- Run the learning script: `(venv) ~\dogml> mlagents-learn`
+- Hit "play" in Unity.
+
 ## The environment
 
 The environment is a "prefab" Dog and a DogController.
