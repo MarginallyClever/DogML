@@ -4,6 +4,7 @@ using UnityEngine;
 using Unity.MLAgents;
 using Unity.MLAgents.Sensors;
 using Unity.MLAgents.Actuators;
+using System;
 
 /**
  * Uses Unity ml-agents: https://github.com/Unity-Technologies/ml-agents
@@ -13,25 +14,11 @@ using Unity.MLAgents.Actuators;
  * @since 2022-06-15
  */
 public class DogController : Agent {
-    public GameObject dog;
-    private GameObject dogCopy;
+    private GameObject torsoCopy;
 
     private ArticulationBody Torso;
     private ArticulationBody Neck;
     private ArticulationBody Head;
-
-    class DogLeg {
-        public ArticulationBody Shoulder;
-        public ArticulationBody Thigh;
-        public ArticulationBody Calf;
-        public FootContact Foot;
-    };
-
-    class JointLimit {
-        public int bodyIndex;
-        public float lower;
-        public float upper;
-    };
 
     private DogLeg[] legs = new DogLeg[4];
 
@@ -39,36 +26,44 @@ public class DogController : Agent {
 
     private List<float> jointTargets = new List<float>();
     private List<int> jointIndexes = new List<int>();
-    private List<JointLimit> limits = new List<JointLimit>();
+    private List<DogJointLimit> limits = new List<DogJointLimit>();
+    private List<float> lastCommands = new List<float>();
+
+    public float facingUpReward = 100f;
+    public float standingUpReward = 10f;
+    public float horizontalMovementReward = 0.1f;
+    public float jointSpeed = 0.1f;
 
     private void Start() {
         for (int i = 0; i < legs.Length; ++i) {
             legs[i] = new DogLeg();
         }
+        transform.Find("Torso").gameObject.SetActive(false);
+    }
 
-        Torso = dog.transform.Find("Torso").GetComponent<ArticulationBody>();
+    public override void OnEpisodeBegin() {
+        //Debug.Log("Episode " + this.CompletedEpisodes);
+        if (torsoCopy != null) Destroy(torsoCopy);
+        torsoCopy = Instantiate(
+            transform.Find("Torso").gameObject,
+            transform.position,
+            transform.parent.transform.rotation,
+            transform);
+
+        torsoCopy.SetActive(true);
+
+        Torso = torsoCopy.GetComponent<ArticulationBody>();
+        if (Torso == null) Debug.LogError("no torso model found.");
+        /*
+        Torso.transform.Rotate(new Vector3(
+            Random.Range(-180, 180),
+            Random.Range(-180, 180),
+            Random.Range(-180, 180)));*/
+
         Torso.GetDriveTargets(jointTargets);
         //Debug.Log("list = " + string.Join(", ", jointTargets));
         Torso.GetDofStartIndices(jointIndexes);
         //Debug.Log("indexes = " + string.Join(", ", jointIndexes));
-    }
-
-    public override void OnEpisodeBegin() {
-        dog.SetActive(false);
-
-        Debug.Log("Episode " + this.CompletedEpisodes);
-        if (dogCopy != null) Destroy(dogCopy);
-        dogCopy = Instantiate(dog);
-        dogCopy.SetActive(true);
-
-
-        Torso = dogCopy.transform.Find("Torso").GetComponent<ArticulationBody>();
-        if (Torso == null) Debug.LogError("no torso model found.");
-
-        Torso.transform.Rotate(new Vector3(
-            Random.Range(-180, 180),
-            Random.Range(-180, 180),
-            Random.Range(-180, 180)));
 
         legs[0].Shoulder = Torso.transform.Find("ShoulderRF").GetComponent<ArticulationBody>();
         legs[1].Shoulder = Torso.transform.Find("ShoulderRB").GetComponent<ArticulationBody>();
@@ -99,7 +94,13 @@ public class DogController : Agent {
         startTime = Time.time;
     }
 
+    internal void SetSelectedMaterial(Material selectedMaterial) {
+        Torso.transform.Find("Torso Model").GetComponent<MeshRenderer>().material = selectedMaterial;
+    }
+
     private void FindLimits() {
+        limits.Clear();
+
         for (int i = 0; i < legs.Length; ++i) {
             FindLimits(legs[i].Shoulder);
             FindLimits(legs[i].Thigh);
@@ -108,7 +109,7 @@ public class DogController : Agent {
     }
 
     private void FindLimits(ArticulationBody body) {
-        JointLimit lim = new JointLimit();
+        DogJointLimit lim = new DogJointLimit();
         lim.lower = body.xDrive.lowerLimit;
         lim.upper = body.xDrive.upperLimit;
         lim.bodyIndex = body.index;
@@ -116,53 +117,179 @@ public class DogController : Agent {
     }
 
     private float GetFacingUp() {
-        return Torso.transform.up.y;
+        return (1+Torso.transform.up.y)/2;
     }
 
     private float GetHeight() {
         return Torso.transform.position.y;
     }
-    
+
+    /**
+     * Each 'observation' should be a value [-1,1]
+     */
     public override void CollectObservations(VectorSensor sensor) {
+        List<float> positions = new List<float>();
+        Torso.GetJointPositions(positions);
+        sensor.AddObservation(positions);
+
+        List<float> velocities = new List<float>();
+        Torso.GetJointVelocities(velocities);
+        sensor.AddObservation(velocities);
+
+        if(lastCommands.Count< velocities.Count) {
+            for (int i = lastCommands.Count; i < velocities.Count; ++i) {
+                lastCommands.Add(0);
+            }
+        }
+
+        //List<float> accelerations = new List<float>();
+        //Torso.GetJointAccelerations(accelerations);
+        //sensor.AddObservation(accelerations);
+        sensor.AddObservation(lastCommands);
+        
         for (int i = 0; i < legs.Length; ++i) {
-            sensor.AddObservation(legs[i].Shoulder.jointPosition[0]);
-            sensor.AddObservation(legs[i].Thigh.jointPosition[0]);
-            sensor.AddObservation(legs[i].Calf.jointPosition[0]);
             sensor.AddObservation(legs[i].Foot.inContact ? 1 : 0);
         }
 
-        sensor.AddObservation(GetFacingUp());
-        sensor.AddObservation(GetHeight());
-    }
-        
-    public override void OnActionReceived(ActionBuffers actions) {
-        //Debug.Log("first = " + actions.ContinuousActions[0]);
+        sensor.AddObservation(GetHeight()/3.6f);
 
-        int least = Mathf.Min(actions.ContinuousActions.Length, jointTargets.Count);
-        for (int i = 0; i < least; ++i) {
-            JointLimit lim = limits[i];
-            int index = jointIndexes[lim.bodyIndex];
-            float f = jointTargets[index] + actions.ContinuousActions[i]*10f-5f;
-            jointTargets[index] = Mathf.Max(Mathf.Min(f, lim.upper), lim.lower);
+        Vector3 whichWayIsUp = transform.InverseTransformDirection(new Vector3(0,1,0));
+        sensor.AddObservation(whichWayIsUp);
+
+
+        Vector3 localVelocity = transform.InverseTransformDirection(Torso.velocity);
+        sensor.AddObservation(localVelocity.normalized);
+        sensor.AddObservation(Mathf.Clamp(localVelocity.magnitude,0f,10f)/10.0f);
+        Vector3 localAngularVelocity = transform.InverseTransformDirection(Torso.angularVelocity).normalized * Torso.angularVelocity.magnitude;
+        sensor.AddObservation(localAngularVelocity);
+    }
+
+    private void FixedUpdate() {
+        // I have no idea how often reward is used to improve the network.
+        // I try to keep it updated all the time.
+        CalculateReward();
+        // Instead of calculating reward here as some magic number, I'm now
+        // using a system where I vote on who is doing best and everyone else
+        // leaves the island.
+    }
+
+    /**
+     * Reward should be a value [-1,1]
+     */
+    private void CalculateReward() {
+        // is it facing up?
+        float up = GetFacingUp() * facingUpReward;
+        //Debug.Log(up);
+
+        // is it standing?
+        // range 0... almost 1.  dog floating off floor at 3.66
+        float height = Mathf.Clamp(GetHeight() / 3.6f,0f,1f) * standingUpReward;
+
+        // punish larg changes in acceleration.  make the creature lazy.
+        float energyUsed = 0;
+        foreach( float acceleration in lastCommands) {
+            energyUsed += acceleration;
+        }
+        AddReward(-energyUsed);
+
+        // is it moving?
+        //Vector3 v = //new Vector3(Torso.velocity.x, 0, Torso.velocity.z);
+        //            transform.InverseTransformDirection(Torso.velocity);
+
+        //float horizontalSpeed = (Mathf.Clamp(v.magnitude, 0f, 10f) / 10.0f);
+
+        // punish fast vertical movements to prevent jumping?
+        //float verticalSpeed = 1.0f - Mathf.Abs(Torso.velocity.y);
+        float speedScore = 0;// horizontalMovementReward;// horizontalSpeed;
+
+        // Debug.Log(up+"\t"+height+"\t"+horizontalSpeed);
+        AddReward(up + height + speedScore);
+    }
+
+    public override void OnActionReceived(ActionBuffers actions) {
+        Torso.GetDriveTargets(jointTargets);
+        lastCommands.Clear();
+
+        for (int i = 0; i < limits.Count; ++i) {
+            DogJointLimit lim = limits[i];
+            int ji = jointIndexes[lim.bodyIndex];
+            float before = Mathf.Rad2Deg * jointTargets[ji];
+
+            // adjust joint target incrementally
+            // aka control joint target velocity.
+            float ca = Mathf.Clamp(actions.ContinuousActions[i], -1, 1);
+            float after = before + ca * jointSpeed * Time.fixedDeltaTime;
+
+            // move joint target absolutely
+            //float ca = (1.0f + Mathf.Clamp(actions.ContinuousActions[i], -1, 1))/2f;
+            //float after = Mathf.Lerp(lim.lower,lim.upper,ca);
+
+            jointTargets[ji] = Mathf.Deg2Rad * Mathf.Clamp(after, lim.lower, lim.upper);
+            //jointTargets[ji] = Mathf.Lerp(lim.lower, lim.upper, ca);
+            lastCommands.Add(ca);
         }
 
+        //Debug.Log(String.Join(",",jointTargets));
         Torso.SetDriveTargets(jointTargets);
     }
 
-    // Update is called once per frame
-    void FixedUpdate() {
-        // (GameObject.Find("Torso Model")).GetComponent<Rigidbody>().AddForce(new Vector3(0,5,0), ForceMode.Impulse);
 
-        // range -1...1
-        //AddReward(GetFacingUp());
-
-        // range 0... almost 1.  dog floating off floor at 3.66
-        //AddReward(GetHeight());
-
-        AddReward(Torso.velocity.x);
-
-        if(Time.time - startTime > 30) {
-            EndEpisode();
+    public override void Heuristic(in ActionBuffers actionsOut) {
+        var continuousActionsOut = actionsOut.ContinuousActions;
+        for (int i = 0; i < limits.Count; ++i) {
+            continuousActionsOut[i] = 0;
         }
+
+        if (Input.GetKey(KeyCode.Q)) LeftCalves(continuousActionsOut, +1);
+        if (Input.GetKey(KeyCode.A)) LeftCalves(continuousActionsOut, -1);
+        if (Input.GetKey(KeyCode.W)) LeftThighs(continuousActionsOut,+1);
+        if (Input.GetKey(KeyCode.S)) LeftThighs(continuousActionsOut,-1);
+        if (Input.GetKey(KeyCode.E)) LeftShoulders(continuousActionsOut,+1);
+        if (Input.GetKey(KeyCode.D)) LeftShoulders(continuousActionsOut,-1);
+
+        if (Input.GetKey(KeyCode.Y)) RightShoulders(continuousActionsOut, +1);
+        if (Input.GetKey(KeyCode.H)) RightShoulders(continuousActionsOut, -1);
+        if (Input.GetKey(KeyCode.U)) RightThighs(continuousActionsOut,+1);
+        if (Input.GetKey(KeyCode.J)) RightThighs(continuousActionsOut,-1);
+        if (Input.GetKey(KeyCode.I)) RightCalves(continuousActionsOut,+1);
+        if (Input.GetKey(KeyCode.K)) RightCalves(continuousActionsOut,-1);
+    }
+
+    private void addTarget(ActionSegment<float> continuousActionsOut, ArticulationBody body, float angle) {
+        for (int i = 0; i < limits.Count; ++i) {
+            if(limits[i].bodyIndex == body.index) {
+                continuousActionsOut[i] = angle;
+            }
+        }
+    }
+
+    private void LeftShoulders(ActionSegment<float> continuousActionsOut, float angle) {
+        addTarget(continuousActionsOut, legs[2].Shoulder, angle);
+        addTarget(continuousActionsOut, legs[3].Shoulder, angle);
+    }
+
+    private void LeftThighs(ActionSegment<float> continuousActionsOut,float angle) {
+        addTarget(continuousActionsOut, legs[2].Thigh, angle);
+        addTarget(continuousActionsOut, legs[3].Thigh, angle);
+    }
+
+    private void LeftCalves(ActionSegment<float> continuousActionsOut,float angle) {
+        addTarget(continuousActionsOut, legs[2].Calf, angle);
+        addTarget(continuousActionsOut, legs[3].Calf, angle);
+    }
+
+    private void RightShoulders(ActionSegment<float> continuousActionsOut, float angle) {
+        addTarget(continuousActionsOut, legs[0].Shoulder, angle);
+        addTarget(continuousActionsOut, legs[1].Shoulder, angle);
+    }
+
+    private void RightThighs(ActionSegment<float> continuousActionsOut,float angle) {
+        addTarget(continuousActionsOut, legs[0].Thigh, angle);
+        addTarget(continuousActionsOut, legs[1].Thigh, angle);
+    }
+
+    private void RightCalves(ActionSegment<float> continuousActionsOut,float angle) {
+        addTarget(continuousActionsOut, legs[0].Calf, angle);
+        addTarget(continuousActionsOut, legs[1].Calf, angle);
     }
 }
