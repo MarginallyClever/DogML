@@ -45,7 +45,7 @@ ArticulationBody:
   m_Enabled: 1
   serializedVersion: 3
   m_Mass: 1
-  m_ParentAnchorPosition: {x: 0.5, y: -0.00000014901161, z: 0}
+  m_ParentAnchorPosition: {x: 0.5, y: -0.00000011920929, z: 0}
   m_ParentAnchorRotation: {x: 0, y: 0.70710677, z: -0.70710677, w: 0}
   m_AnchorPosition: {x: 0, y: 0, z: 0}
   m_AnchorRotation: {x: 0.70710677, y: 0, z: 0, w: 0.70710677}
@@ -101,9 +101,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   angles: []
   visualize: 0
-  startWidth: 2
-  endWidth: 1
-  distance: 5
+  startWidth: 0.01
+  endWidth: 0.01
+  distance: 2
   startColor: {r: 1, g: 1, b: 1, a: 1}
   endColor: {r: 1, g: 1, b: 1, a: 1}
 --- !u!1 &695853866732785941
@@ -429,9 +429,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   angles: []
   visualize: 0
-  startWidth: 2
-  endWidth: 1
-  distance: 5
+  startWidth: 0.01
+  endWidth: 0.01
+  distance: 2
   startColor: {r: 1, g: 1, b: 1, a: 1}
   endColor: {r: 1, g: 1, b: 1, a: 1}
 --- !u!1 &1275350936106608532
@@ -576,7 +576,7 @@ ArticulationBody:
   m_Enabled: 1
   serializedVersion: 3
   m_Mass: 1.5
-  m_ParentAnchorPosition: {x: 0.5, y: -0.00000014901161, z: 0}
+  m_ParentAnchorPosition: {x: 0.5, y: 0.00000008940697, z: 0}
   m_ParentAnchorRotation: {x: 0, y: 0.70710677, z: -0.70710677, w: 0}
   m_AnchorPosition: {x: 0, y: 0, z: 0}
   m_AnchorRotation: {x: 0.70710677, y: 0, z: 0, w: 0.70710677}
@@ -632,9 +632,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   angles: []
   visualize: 0
-  startWidth: 2
-  endWidth: 1
-  distance: 5
+  startWidth: 0.01
+  endWidth: 0.01
+  distance: 2
   startColor: {r: 1, g: 1, b: 1, a: 1}
   endColor: {r: 1, g: 1, b: 1, a: 1}
 --- !u!1 &1701399134582314339
@@ -760,7 +760,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1753504192133039054}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.43, y: 0.41, z: -1.03}
+  m_LocalPosition: {x: 0.43, y: 0.2950002, z: -1.03}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -779,7 +779,7 @@ ArticulationBody:
   m_Enabled: 1
   serializedVersion: 3
   m_Mass: 1
-  m_ParentAnchorPosition: {x: 0.43, y: 0.40999985, z: -1.03}
+  m_ParentAnchorPosition: {x: 0.43, y: 0.29500008, z: -1.03}
   m_ParentAnchorRotation: {x: 0.5, y: -0.5, z: 0.5, w: 0.5}
   m_AnchorPosition: {x: 0, y: 0, z: 0}
   m_AnchorRotation: {x: 0.5, y: -0.5, z: 0.5, w: 0.5}
@@ -792,7 +792,7 @@ ArticulationBody:
   m_SwingZ: 2
   m_Twist: 1
   m_XDrive:
-    lowerLimit: 0
+    lowerLimit: -15
     upperLimit: 105
     stiffness: 500
     damping: 125
@@ -835,9 +835,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   angles: []
   visualize: 0
-  startWidth: 2
-  endWidth: 1
-  distance: 5
+  startWidth: 0.01
+  endWidth: 0.01
+  distance: 2
   startColor: {r: 1, g: 1, b: 1, a: 1}
   endColor: {r: 1, g: 1, b: 1, a: 1}
 --- !u!1 &1910062361412051522
@@ -982,7 +982,7 @@ ArticulationBody:
   m_Enabled: 1
   serializedVersion: 3
   m_Mass: 1.5
-  m_ParentAnchorPosition: {x: 0.5, y: -0.00000014901161, z: 0}
+  m_ParentAnchorPosition: {x: 0.5, y: -0.00000011920929, z: 0}
   m_ParentAnchorRotation: {x: 0.70710677, y: 0, z: 0, w: 0.70710677}
   m_AnchorPosition: {x: 0, y: 0, z: 0}
   m_AnchorRotation: {x: 0.70710677, y: 0, z: 0, w: 0.70710677}
@@ -1038,9 +1038,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   angles: []
   visualize: 0
-  startWidth: 2
-  endWidth: 1
-  distance: 5
+  startWidth: 0.01
+  endWidth: 0.01
+  distance: 2
   startColor: {r: 1, g: 1, b: 1, a: 1}
   endColor: {r: 1, g: 1, b: 1, a: 1}
 --- !u!1 &2797437480652685191
@@ -1542,7 +1542,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4252617044891395678}
   m_LocalRotation: {x: 0, y: 1, z: 0, w: 0}
-  m_LocalPosition: {x: -0.43, y: 0.41, z: 1.03}
+  m_LocalPosition: {x: -0.43, y: 0.2950002, z: 1.03}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -1561,7 +1561,7 @@ ArticulationBody:
   m_Enabled: 1
   serializedVersion: 3
   m_Mass: 1
-  m_ParentAnchorPosition: {x: -0.43, y: 0.40999985, z: 1.03}
+  m_ParentAnchorPosition: {x: -0.43, y: 0.29500008, z: 1.03}
   m_ParentAnchorRotation: {x: 0.5, y: 0.5, z: -0.5, w: 0.5}
   m_AnchorPosition: {x: 0, y: 0, z: 0}
   m_AnchorRotation: {x: 0.5, y: -0.5, z: 0.5, w: 0.5}
@@ -1574,7 +1574,7 @@ ArticulationBody:
   m_SwingZ: 2
   m_Twist: 1
   m_XDrive:
-    lowerLimit: 0
+    lowerLimit: -15
     upperLimit: 105
     stiffness: 500
     damping: 125
@@ -1617,9 +1617,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   angles: []
   visualize: 0
-  startWidth: 2
-  endWidth: 1
-  distance: 5
+  startWidth: 0.01
+  endWidth: 0.01
+  distance: 2
   startColor: {r: 1, g: 1, b: 1, a: 1}
   endColor: {r: 1, g: 1, b: 1, a: 1}
 --- !u!1 &4761522042640813668
@@ -1759,7 +1759,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5569005838680159891}
   m_LocalRotation: {x: 0, y: 1, z: 0, w: 0}
-  m_LocalPosition: {x: -0.43, y: 0.41, z: -1.03}
+  m_LocalPosition: {x: -0.43, y: 0.295, z: -1.03}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -1778,7 +1778,7 @@ ArticulationBody:
   m_Enabled: 1
   serializedVersion: 3
   m_Mass: 1
-  m_ParentAnchorPosition: {x: -0.43, y: 0.40999985, z: -1.03}
+  m_ParentAnchorPosition: {x: -0.43, y: 0.29500008, z: -1.03}
   m_ParentAnchorRotation: {x: 0.5, y: 0.5, z: -0.5, w: 0.5}
   m_AnchorPosition: {x: 0, y: 0, z: 0}
   m_AnchorRotation: {x: 0.5, y: -0.5, z: 0.5, w: 0.5}
@@ -1791,7 +1791,7 @@ ArticulationBody:
   m_SwingZ: 2
   m_Twist: 1
   m_XDrive:
-    lowerLimit: 0
+    lowerLimit: -15
     upperLimit: 105
     stiffness: 500
     damping: 125
@@ -1834,9 +1834,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   angles: []
   visualize: 0
-  startWidth: 2
-  endWidth: 1
-  distance: 5
+  startWidth: 0.01
+  endWidth: 0.01
+  distance: 2
   startColor: {r: 1, g: 1, b: 1, a: 1}
   endColor: {r: 1, g: 1, b: 1, a: 1}
 --- !u!1 &6263617311086520804
@@ -2219,9 +2219,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   angles: []
   visualize: 0
-  startWidth: 2
-  endWidth: 1
-  distance: 5
+  startWidth: 0.01
+  endWidth: 0.01
+  distance: 2
   startColor: {r: 1, g: 1, b: 1, a: 1}
   endColor: {r: 1, g: 1, b: 1, a: 1}
 --- !u!1 &8491281026686073592
@@ -2454,9 +2454,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   angles: []
   visualize: 0
-  startWidth: 2
-  endWidth: 1
-  distance: 5
+  startWidth: 0.01
+  endWidth: 0.01
+  distance: 2
   startColor: {r: 1, g: 1, b: 1, a: 1}
   endColor: {r: 1, g: 1, b: 1, a: 1}
 --- !u!1 &8504986972862700166
@@ -2642,6 +2642,7 @@ GameObject:
   - component: {fileID: 1413865803579744503}
   - component: {fileID: 4943889671771327693}
   - component: {fileID: 790631422848439764}
+  - component: {fileID: 5730279526461497057}
   m_Layer: 0
   m_Name: Dog
   m_TagString: Untagged
@@ -2678,8 +2679,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_BrainParameters:
-    VectorObservationSize: 69
-    NumStackedVectorObservations: 8
+    VectorObservationSize: 105
+    NumStackedVectorObservations: 1
     m_ActionSpec:
       m_NumContinuousActions: 12
       BranchSizes: 
@@ -2710,11 +2711,12 @@ MonoBehaviour:
   agentParameters:
     maxStep: 0
   hasUpgradedFromAgentParameters: 1
-  MaxStep: 2000
-  facingUpReward: 1
+  MaxStep: 5000
+  facingUpReward: 10
   standingUpReward: 1
   horizontalMovementReward: 0
-  jointSpeed: 180
+  jointSpeed: 90
+  costOfEnergy: 0
 --- !u!114 &790631422848439764
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2729,6 +2731,22 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   DecisionPeriod: 5
   TakeActionsBetweenDecisions: 1
+--- !u!114 &5730279526461497057
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8504986973048400335}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f2902496c0120472b90269f94a0aec7e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Record: 0
+  NumStepsToRecord: 0
+  DemonstrationName: RollOverAndStand
+  DemonstrationDirectory: Demos
 --- !u!1 &8504986973153812396
 GameObject:
   m_ObjectHideFlags: 0
@@ -2852,7 +2870,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8504986973266982030}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.43, y: 0.41, z: 1.03}
+  m_LocalPosition: {x: 0.43, y: 0.2950002, z: 1.03}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -2871,7 +2889,7 @@ ArticulationBody:
   m_Enabled: 1
   serializedVersion: 3
   m_Mass: 1
-  m_ParentAnchorPosition: {x: 0.43, y: 0.40999985, z: 1.03}
+  m_ParentAnchorPosition: {x: 0.43, y: 0.29500008, z: 1.03}
   m_ParentAnchorRotation: {x: 0.5, y: -0.5, z: 0.5, w: 0.5}
   m_AnchorPosition: {x: 0, y: 0, z: 0}
   m_AnchorRotation: {x: 0.5, y: -0.5, z: 0.5, w: 0.5}
@@ -2884,7 +2902,7 @@ ArticulationBody:
   m_SwingZ: 2
   m_Twist: 1
   m_XDrive:
-    lowerLimit: 0
+    lowerLimit: -15
     upperLimit: 105
     stiffness: 500
     damping: 125
@@ -2927,9 +2945,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   angles: []
   visualize: 0
-  startWidth: 2
-  endWidth: 1
-  distance: 5
+  startWidth: 0.01
+  endWidth: 0.01
+  distance: 2
   startColor: {r: 1, g: 1, b: 1, a: 1}
   endColor: {r: 1, g: 1, b: 1, a: 1}
 --- !u!1 &8504986973293422116
@@ -3270,7 +3288,7 @@ ArticulationBody:
   m_Enabled: 1
   serializedVersion: 3
   m_Mass: 1
-  m_ParentAnchorPosition: {x: 0.5, y: -0.00000014901161, z: 0}
+  m_ParentAnchorPosition: {x: 0.5, y: -0.00000011920929, z: 0}
   m_ParentAnchorRotation: {x: 0.70710677, y: 0, z: 0, w: 0.70710677}
   m_AnchorPosition: {x: 0, y: 0, z: 0}
   m_AnchorRotation: {x: 0.70710677, y: 0, z: 0, w: 0.70710677}
@@ -3326,9 +3344,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   angles: []
   visualize: 0
-  startWidth: 2
-  endWidth: 1
-  distance: 5
+  startWidth: 0.01
+  endWidth: 0.01
+  distance: 2
   startColor: {r: 1, g: 1, b: 1, a: 1}
   endColor: {r: 1, g: 1, b: 1, a: 1}
 --- !u!1 &8504986973766756870
@@ -3437,9 +3455,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8504986973897299609}
-  - component: {fileID: 8504986973897299610}
   - component: {fileID: 8504986973897299611}
-  - component: {fileID: 8504986973897299608}
+  - component: {fileID: 6644820199278860491}
+  - component: {fileID: 6913675060602713614}
   m_Layer: 0
   m_Name: Torso Model
   m_TagString: Untagged
@@ -3454,22 +3472,14 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8504986973897299622}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalRotation: {x: -0.7071068, y: 0, z: 0, w: 0.7071068}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1.618, z: 2.617924}
+  m_LocalScale: {x: 1, y: 3, z: 1.618}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 8504986974233040145}
   m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!33 &8504986973897299610
-MeshFilter:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8504986973897299622}
-  m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+  m_LocalEulerAnglesHint: {x: -90, y: 0, z: 0}
 --- !u!23 &8504986973897299611
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -3512,18 +3522,26 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!65 &8504986973897299608
+--- !u!33 &6644820199278860491
+MeshFilter:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8504986973897299622}
+  m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!65 &6913675060602713614
 BoxCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8504986973897299622}
-  m_Material: {fileID: 13400000, guid: 2413002730820a9438012860f7425983, type: 2}
+  m_Material: {fileID: 0}
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 1, y: 1, z: 1}
+  m_Size: {x: 1, y: 1.0000004, z: 1.0000002}
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &8504986974206734647
 GameObject:
@@ -3669,7 +3687,7 @@ ArticulationBody:
   m_GameObject: {fileID: 8504986974233040158}
   m_Enabled: 1
   serializedVersion: 3
-  m_Mass: 10
+  m_Mass: 8
   m_ParentAnchorPosition: {x: 0, y: 0, z: 0}
   m_ParentAnchorRotation: {x: 0, y: 0, z: 0.7071068, w: 0.7071068}
   m_AnchorPosition: {x: 0, y: 0, z: 0}
@@ -3842,7 +3860,7 @@ ArticulationBody:
   m_Enabled: 1
   serializedVersion: 3
   m_Mass: 1
-  m_ParentAnchorPosition: {x: 0, y: -1.6180001, z: 0}
+  m_ParentAnchorPosition: {x: 0, y: -1.6179999, z: 0}
   m_ParentAnchorRotation: {x: -0.70710677, y: -0.00000006181724, z: 0.00000006181724, w: -0.70710677}
   m_AnchorPosition: {x: 0, y: 0, z: 0}
   m_AnchorRotation: {x: -0.70710677, y: -0.00000006181724, z: 0.00000006181724, w: -0.70710677}
@@ -3898,8 +3916,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   angles: []
   visualize: 0
-  startWidth: 2
-  endWidth: 1
-  distance: 5
+  startWidth: 0.01
+  endWidth: 0.01
+  distance: 2
   startColor: {r: 1, g: 1, b: 1, a: 1}
   endColor: {r: 1, g: 1, b: 1, a: 1}

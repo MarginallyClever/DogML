@@ -11,9 +11,9 @@ public class AngleReport : MonoBehaviour {
     public List<float> angles;
     public bool visualize=false;
 
-    public float startWidth = 1;
-    public float endWidth = 1;
-    public float distance = 10;
+    public float startWidth = 0.01f;
+    public float endWidth = 0.01f;
+    public float distance = 2;
     public Color startColor = Color.red;
     public Color endColor = Color.red;
 
@@ -25,8 +25,10 @@ public class AngleReport : MonoBehaviour {
             angles.Add(body.jointPosition[i]);
         }
 
-        //LineRenderer drawLine = gameObject.AddComponent<LineRenderer>();
-        //drawLine.material = new Material(Shader.Find("Sprites/Default"));
+        LineRenderer drawLine = gameObject.GetComponent<LineRenderer>();
+        if(drawLine==null) drawLine = gameObject.AddComponent<LineRenderer>();
+        drawLine.material = new Material(Shader.Find("Sprites/Default"));
+        drawLine.useWorldSpace = false;
     }
 
     // Update is called once per frame
@@ -35,18 +37,15 @@ public class AngleReport : MonoBehaviour {
             angles[i] = body.jointPosition[i];
         }
 
-        if (visualize) {/*
+        if (visualize) {
             var points = new Vector3[4];
             // reference line
             points[0] = Vector3.zero;
-            points[1] = new Vector3(distance,0,0);
+            points[1] = transform.forward * distance;
 
             // show target angle
             points[2] = Vector3.zero;
-            points[3] = new Vector3(
-                Mathf.Cos(angles[0]) * distance,
-                Mathf.Sin(angles[0]) * distance,
-                0);
+            points[3] = new Vector3( Mathf.Cos(angles[0]), Mathf.Sin(angles[0]), 0) * distance;
 
             LineRenderer drawLine = gameObject.GetComponent<LineRenderer>();
             drawLine.startWidth = startWidth;
@@ -54,9 +53,10 @@ public class AngleReport : MonoBehaviour {
             drawLine.startColor = startColor;
             drawLine.endColor = endColor;
             drawLine.positionCount = points.Length;
-            drawLine.SetPositions(points);*/
+            drawLine.SetPositions(points);
         } else {
-            //drawLine.positionCount = 0;
+            LineRenderer drawLine = gameObject.GetComponent<LineRenderer>();
+            drawLine.positionCount = 0;
         }
     }
 }

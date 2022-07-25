@@ -4,6 +4,7 @@ using UnityEngine;
 
 
 class DogJointLimit {
+    public GameObject obj;
     public int bodyIndex;
     public float lower;
     public float upper;

@@ -34,11 +34,19 @@ public class DogController : Agent {
     public float horizontalMovementReward = 0.1f;
     public float jointSpeed = 0.1f;
 
+    public float costOfEnergy = 0f;
+
     private void Start() {
         for (int i = 0; i < legs.Length; ++i) {
             legs[i] = new DogLeg();
         }
         transform.Find("Torso").gameObject.SetActive(false);
+    }
+
+    public override void Initialize() {
+        if (!Academy.Instance.IsCommunicatorOn) {
+            this.MaxStep = 0;
+        }
     }
 
     public override void OnEpisodeBegin() {
@@ -49,16 +57,12 @@ public class DogController : Agent {
             transform.position,
             transform.parent.transform.rotation,
             transform);
-
+        
         torsoCopy.SetActive(true);
 
         Torso = torsoCopy.GetComponent<ArticulationBody>();
         if (Torso == null) Debug.LogError("no torso model found.");
-        /*
-        Torso.transform.Rotate(new Vector3(
-            Random.Range(-180, 180),
-            Random.Range(-180, 180),
-            Random.Range(-180, 180)));*/
+
 
         Torso.GetDriveTargets(jointTargets);
         //Debug.Log("list = " + string.Join(", ", jointTargets));
@@ -113,11 +117,12 @@ public class DogController : Agent {
         lim.lower = body.xDrive.lowerLimit;
         lim.upper = body.xDrive.upperLimit;
         lim.bodyIndex = body.index;
+        lim.obj = body.gameObject;
         limits.Add(lim);
     }
 
     private float GetFacingUp() {
-        return (1+Torso.transform.up.y)/2;
+        return (1f+Torso.transform.up.y)/2f;
     }
 
     private float GetHeight() {
@@ -128,6 +133,11 @@ public class DogController : Agent {
      * Each 'observation' should be a value [-1,1]
      */
     public override void CollectObservations(VectorSensor sensor) {
+        for(int i=0;i<limits.Count;++i) {
+            Vector3 p2 = Torso.transform.InverseTransformPoint(limits[i].obj.transform.position);
+            sensor.AddObservation(p2);
+        }
+
         List<float> positions = new List<float>();
         Torso.GetJointPositions(positions);
         sensor.AddObservation(positions);
@@ -136,31 +146,31 @@ public class DogController : Agent {
         Torso.GetJointVelocities(velocities);
         sensor.AddObservation(velocities);
 
-        if(lastCommands.Count< velocities.Count) {
-            for (int i = lastCommands.Count; i < velocities.Count; ++i) {
-                lastCommands.Add(0);
-            }
-        }
+        List<float> accelerations = new List<float>();
+        Torso.GetJointAccelerations(accelerations);
+        sensor.AddObservation(accelerations);
 
-        //List<float> accelerations = new List<float>();
-        //Torso.GetJointAccelerations(accelerations);
-        //sensor.AddObservation(accelerations);
-        sensor.AddObservation(lastCommands);
-        
+        //if(lastCommands.Count< velocities.Count) {
+        //    for (int i = lastCommands.Count; i < velocities.Count; ++i) {
+        //        lastCommands.Add(0);
+        //    }
+        //}
+        //sensor.AddObservation(lastCommands);
+
         for (int i = 0; i < legs.Length; ++i) {
             sensor.AddObservation(legs[i].Foot.inContact ? 1 : 0);
         }
 
         sensor.AddObservation(GetHeight()/3.6f);
 
-        Vector3 whichWayIsUp = transform.InverseTransformDirection(new Vector3(0,1,0));
+        Vector3 whichWayIsUp = Torso.transform.InverseTransformDirection(new Vector3(0,1,0));
         sensor.AddObservation(whichWayIsUp);
 
 
-        Vector3 localVelocity = transform.InverseTransformDirection(Torso.velocity);
+        Vector3 localVelocity = Torso.transform.InverseTransformDirection(Torso.velocity);
         sensor.AddObservation(localVelocity.normalized);
         sensor.AddObservation(Mathf.Clamp(localVelocity.magnitude,0f,10f)/10.0f);
-        Vector3 localAngularVelocity = transform.InverseTransformDirection(Torso.angularVelocity).normalized * Torso.angularVelocity.magnitude;
+        Vector3 localAngularVelocity = Torso.transform.InverseTransformDirection(Torso.angularVelocity).normalized * Torso.angularVelocity.magnitude;
         sensor.AddObservation(localAngularVelocity);
     }
 
@@ -185,17 +195,11 @@ public class DogController : Agent {
         // range 0... almost 1.  dog floating off floor at 3.66
         float height = Mathf.Clamp(GetHeight() / 3.6f,0f,1f) * standingUpReward;
 
-        // punish larg changes in acceleration.  make the creature lazy.
-        float energyUsed = 0;
-        foreach( float acceleration in lastCommands) {
-            energyUsed += acceleration;
-        }
-        AddReward(-energyUsed);
+        if(costOfEnergy>0) MakeEnergyUseExpensive();
 
         // is it moving?
         //Vector3 v = //new Vector3(Torso.velocity.x, 0, Torso.velocity.z);
         //            transform.InverseTransformDirection(Torso.velocity);
-
         //float horizontalSpeed = (Mathf.Clamp(v.magnitude, 0f, 10f) / 10.0f);
 
         // punish fast vertical movements to prevent jumping?
@@ -203,7 +207,17 @@ public class DogController : Agent {
         float speedScore = 0;// horizontalMovementReward;// horizontalSpeed;
 
         // Debug.Log(up+"\t"+height+"\t"+horizontalSpeed);
-        AddReward(up + height + speedScore);
+        SetReward(up * height + speedScore);
+    }
+
+    // punish larg changes in acceleration.  make the creature lazy.
+    private void MakeEnergyUseExpensive() {
+        float energyUsed = 0;
+        foreach( float acceleration in lastCommands) {
+            energyUsed += Mathf.Abs(acceleration);
+        }
+        AddReward(-energyUsed * costOfEnergy);
+
     }
 
     public override void OnActionReceived(ActionBuffers actions) {
@@ -218,11 +232,12 @@ public class DogController : Agent {
             // adjust joint target incrementally
             // aka control joint target velocity.
             float ca = Mathf.Clamp(actions.ContinuousActions[i], -1, 1);
-            float after = before + ca * jointSpeed * Time.fixedDeltaTime;
 
-            // move joint target absolutely
-            //float ca = (1.0f + Mathf.Clamp(actions.ContinuousActions[i], -1, 1))/2f;
-            //float after = Mathf.Lerp(lim.lower,lim.upper,ca);
+            // relative moves
+            float after = before + ca * jointSpeed * Time.fixedDeltaTime;
+            
+            // absolute moves
+            //float after = Mathf.Lerp(lim.lower,lim.upper,(1.0f + ca)/2f);
 
             jointTargets[ji] = Mathf.Deg2Rad * Mathf.Clamp(after, lim.lower, lim.upper);
             //jointTargets[ji] = Mathf.Lerp(lim.lower, lim.upper, ca);
@@ -244,11 +259,11 @@ public class DogController : Agent {
         if (Input.GetKey(KeyCode.A)) LeftCalves(continuousActionsOut, -1);
         if (Input.GetKey(KeyCode.W)) LeftThighs(continuousActionsOut,+1);
         if (Input.GetKey(KeyCode.S)) LeftThighs(continuousActionsOut,-1);
-        if (Input.GetKey(KeyCode.E)) LeftShoulders(continuousActionsOut,+1);
-        if (Input.GetKey(KeyCode.D)) LeftShoulders(continuousActionsOut,-1);
+        if (Input.GetKey(KeyCode.E)) LeftShoulders(continuousActionsOut,-1);
+        if (Input.GetKey(KeyCode.D)) LeftShoulders(continuousActionsOut,+1);
 
-        if (Input.GetKey(KeyCode.Y)) RightShoulders(continuousActionsOut, +1);
-        if (Input.GetKey(KeyCode.H)) RightShoulders(continuousActionsOut, -1);
+        if (Input.GetKey(KeyCode.Y)) RightShoulders(continuousActionsOut, -1);
+        if (Input.GetKey(KeyCode.H)) RightShoulders(continuousActionsOut, +1);
         if (Input.GetKey(KeyCode.U)) RightThighs(continuousActionsOut,+1);
         if (Input.GetKey(KeyCode.J)) RightThighs(continuousActionsOut,-1);
         if (Input.GetKey(KeyCode.I)) RightCalves(continuousActionsOut,+1);
@@ -258,7 +273,7 @@ public class DogController : Agent {
     private void addTarget(ActionSegment<float> continuousActionsOut, ArticulationBody body, float angle) {
         for (int i = 0; i < limits.Count; ++i) {
             if(limits[i].bodyIndex == body.index) {
-                continuousActionsOut[i] = angle;
+                continuousActionsOut[i] += angle;
             }
         }
     }
