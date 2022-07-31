@@ -5,6 +5,7 @@ using Unity.MLAgents;
 using Unity.MLAgents.Sensors;
 using Unity.MLAgents.Actuators;
 using System;
+using Random = UnityEngine.Random;
 
 /**
  * Uses Unity ml-agents: https://github.com/Unity-Technologies/ml-agents
@@ -15,6 +16,7 @@ using System;
  */
 public class DogController : Agent {
     private GameObject torsoCopy;
+    private GameObject walkTarget;
 
     private ArticulationBody Torso;
     private ArticulationBody Neck;
@@ -36,11 +38,16 @@ public class DogController : Agent {
 
     public float costOfEnergy = 0f;
 
+    // actual standing height is ~3.55.  lowering this a little
+    public float idealStandingHeight = 3.25f;
+
     private void Start() {
         for (int i = 0; i < legs.Length; ++i) {
             legs[i] = new DogLeg();
         }
         transform.Find("Torso").gameObject.SetActive(false);
+
+        walkTarget = transform.Find("WalkTarget").gameObject;
     }
 
     public override void Initialize() {
@@ -60,6 +67,8 @@ public class DogController : Agent {
         
         torsoCopy.SetActive(true);
 
+        walkTarget.transform.SetPositionAndRotation(transform.position, transform.parent.transform.rotation);
+
         Torso = torsoCopy.GetComponent<ArticulationBody>();
         if (Torso == null) Debug.LogError("no torso model found.");
 
@@ -77,7 +86,7 @@ public class DogController : Agent {
         for (int i = 0; i < legs.Length; ++i) {
             legs[i].Thigh = legs[i].Shoulder.transform.Find("Thigh").GetComponent<ArticulationBody>();
             legs[i].Calf = legs[i].Thigh.transform.Find("Calf").GetComponent<ArticulationBody>();
-            legs[i].Foot = legs[i].Calf.transform.Find("Foot/Foot Model").GetComponent<FootContact>();
+            legs[i].Foot = legs[i].Calf.transform.Find("Calf Model").GetComponent<FootContact>();
             //if (legs[i].Shoulder == null) Debug.LogError("Shoulder " + i + " not found.");
             //if (legs[i].Thigh    == null) Debug.LogError("Thigh " + i + " not found.");
             //if (legs[i].Calf     == null) Debug.LogError("Calf " + i + " not found.");
@@ -94,6 +103,11 @@ public class DogController : Agent {
 
         FindLimits();
         //Debug.Log("limits = " + string.Join(", ", limits));
+
+        Torso.GetDriveTargets(jointTargets);
+        //Debug.Log(String.Join(",", jointTargets));
+
+        MoveWalkTarget();
 
         startTime = Time.time;
     }
@@ -116,13 +130,16 @@ public class DogController : Agent {
         DogJointLimit lim = new DogJointLimit();
         lim.lower = body.xDrive.lowerLimit;
         lim.upper = body.xDrive.upperLimit;
+        lim.range = Mathf.Abs(lim.upper - lim.lower);
         lim.bodyIndex = body.index;
         lim.obj = body.gameObject;
+        lim.body = body;
         limits.Add(lim);
+        //Debug.Log(lim.bodyIndex);
     }
 
     private float GetFacingUp() {
-        return (1f+Torso.transform.up.y)/2f;
+        return Torso.transform.up.y;
     }
 
     private float GetHeight() {
@@ -140,15 +157,16 @@ public class DogController : Agent {
 
         List<float> positions = new List<float>();
         Torso.GetJointPositions(positions);
+
+        for (int i = 0; i < limits.Count; ++i) {
+            var index = limits[i].bodyIndex;
+            // normalize positions
+            var p = positions[index] * Mathf.Rad2Deg;
+            var p2 = (((p - limits[i].lower) / limits[i].range) * 2f ) - 1f;
+            positions[index] = p2;
+        }
+
         sensor.AddObservation(positions);
-
-        List<float> velocities = new List<float>();
-        Torso.GetJointVelocities(velocities);
-        sensor.AddObservation(velocities);
-
-        List<float> accelerations = new List<float>();
-        Torso.GetJointAccelerations(accelerations);
-        sensor.AddObservation(accelerations);
 
         //if(lastCommands.Count< velocities.Count) {
         //    for (int i = lastCommands.Count; i < velocities.Count; ++i) {
@@ -161,7 +179,7 @@ public class DogController : Agent {
             sensor.AddObservation(legs[i].Foot.inContact ? 1 : 0);
         }
 
-        sensor.AddObservation(GetHeight()/3.6f);
+        sensor.AddObservation(Mathf.Min(GetHeight(), idealStandingHeight) / idealStandingHeight);
 
         Vector3 whichWayIsUp = Torso.transform.InverseTransformDirection(new Vector3(0,1,0));
         sensor.AddObservation(whichWayIsUp);
@@ -170,8 +188,14 @@ public class DogController : Agent {
         Vector3 localVelocity = Torso.transform.InverseTransformDirection(Torso.velocity);
         sensor.AddObservation(localVelocity.normalized);
         sensor.AddObservation(Mathf.Clamp(localVelocity.magnitude,0f,10f)/10.0f);
+
         Vector3 localAngularVelocity = Torso.transform.InverseTransformDirection(Torso.angularVelocity).normalized * Torso.angularVelocity.magnitude;
         sensor.AddObservation(localAngularVelocity);
+
+        // direction to target
+        var diff = walkTarget.transform.position - Torso.transform.position;
+        var localDiff = Torso.transform.InverseTransformDirection(diff);
+        sensor.AddObservation(localDiff);
     }
 
     private void FixedUpdate() {
@@ -183,31 +207,64 @@ public class DogController : Agent {
         // leaves the island.
     }
 
+    public float upLowPass = 0;
+    public float heightLowPass = 0.5f;
     /**
      * Reward should be a value [-1,1]
      */
     private void CalculateReward() {
+        
         // is it facing up?
         float up = GetFacingUp() * facingUpReward;
         //Debug.Log(up);
 
         // is it standing?
-        // range 0... almost 1.  dog floating off floor at 3.66
-        float height = Mathf.Clamp(GetHeight() / 3.6f,0f,1f) * standingUpReward;
+        float height = (Mathf.Min(GetHeight(), idealStandingHeight) / idealStandingHeight) * standingUpReward;
+        SetReward(up * height);
+        
 
-        if(costOfEnergy>0) MakeEnergyUseExpensive();
+        if (costOfEnergy>0) MakeEnergyUseExpensive();
 
-        // is it moving?
-        //Vector3 v = //new Vector3(Torso.velocity.x, 0, Torso.velocity.z);
-        //            transform.InverseTransformDirection(Torso.velocity);
-        //float horizontalSpeed = (Mathf.Clamp(v.magnitude, 0f, 10f) / 10.0f);
+        {
+            // is it moving?
+            Vector3 v = transform.InverseTransformDirection(Torso.velocity);
+            v.y = 0;
+            float horizontalSpeed = v.magnitude;
 
-        // punish fast vertical movements to prevent jumping?
-        //float verticalSpeed = 1.0f - Mathf.Abs(Torso.velocity.y);
-        float speedScore = 0;// horizontalMovementReward;// horizontalSpeed;
+            // punish fast vertical movements to prevent jumping?
+            //float verticalSpeed = 1.0f - Mathf.Abs(Torso.velocity.y);
+            float speedScore = horizontalSpeed * horizontalMovementReward;
 
-        // Debug.Log(up+"\t"+height+"\t"+horizontalSpeed);
-        SetReward(up * height + speedScore);
+            // Debug.Log(up+"\t"+height+"\t"+horizontalSpeed);
+            AddReward(speedScore);
+        }
+
+        if(up> upLowPass && height> heightLowPass) {
+            var diff = walkTarget.transform.position - Torso.transform.position;
+            var dn = Vector3.Normalize(diff);
+            var vn = Vector3.Normalize(Torso.velocity);
+            var fn = Torso.transform.forward;
+
+            float facingTarget = Vector3.Dot(fn, dn);
+            AddReward(facingTarget);
+
+            float movingTowardsTarget = Vector3.Dot(vn, dn);
+            AddReward(movingTowardsTarget);
+
+            if (diff.magnitude < 0.1) {
+                // reached target!
+                AddReward(100);
+                MoveWalkTarget();
+            }
+        }
+    }
+
+    private void MoveWalkTarget() {
+        walkTarget.transform.position = new Vector3(
+        Random.Range(-50, 50),
+        walkTarget.transform.position.y,
+        Random.Range(-50, 50)
+        );
     }
 
     // punish larg changes in acceleration.  make the creature lazy.
@@ -220,27 +277,31 @@ public class DogController : Agent {
 
     }
 
+    public float jointScale = 1;
+
     public override void OnActionReceived(ActionBuffers actions) {
-        Torso.GetDriveTargets(jointTargets);
         lastCommands.Clear();
 
         for (int i = 0; i < limits.Count; ++i) {
             DogJointLimit lim = limits[i];
             int ji = jointIndexes[lim.bodyIndex];
-            float before = Mathf.Rad2Deg * jointTargets[ji];
 
-            // adjust joint target incrementally
-            // aka control joint target velocity.
-            float ca = Mathf.Clamp(actions.ContinuousActions[i], -1, 1);
+            // "By default the output from our provided PPO algorithm pre-clamps the values of
+            // ActionBuffers.ContinuousActions into the [-1, 1] range. It is a best practice
+            // to manually clip these as well, if you plan to use a 3rd party algorithm with
+            // your environment. As shown above, you can scale the control values as needed
+            // after clamping them."
+            float ca = Mathf.Clamp(actions.ContinuousActions[i], -1, 1);  //already clamped to [-1,1] but best practice.
 
+            // relative moves don't train as good as absolute moves.
             // relative moves
-            float after = before + ca * jointSpeed * Time.fixedDeltaTime;
-            
+            //float before = Mathf.Rad2Deg * jointTargets[ji];
+            //float after = before + ca * jointSpeed * Time.fixedDeltaTime;
             // absolute moves
-            //float after = Mathf.Lerp(lim.lower,lim.upper,(1.0f + ca)/2f);
+            float after = Mathf.Lerp(lim.lower,lim.upper,(1f + ca)*0.5f);
 
-            jointTargets[ji] = Mathf.Deg2Rad * Mathf.Clamp(after, lim.lower, lim.upper);
-            //jointTargets[ji] = Mathf.Lerp(lim.lower, lim.upper, ca);
+            //jointTargets[ji] = Mathf.Deg2Rad * Mathf.Clamp(after, lim.lower, lim.upper);
+            jointTargets[ji] = Mathf.Deg2Rad * after;
             lastCommands.Add(ca);
         }
 
@@ -251,9 +312,6 @@ public class DogController : Agent {
 
     public override void Heuristic(in ActionBuffers actionsOut) {
         var continuousActionsOut = actionsOut.ContinuousActions;
-        for (int i = 0; i < limits.Count; ++i) {
-            continuousActionsOut[i] = 0;
-        }
 
         if (Input.GetKey(KeyCode.Q)) LeftCalves(continuousActionsOut, +1);
         if (Input.GetKey(KeyCode.A)) LeftCalves(continuousActionsOut, -1);
@@ -273,7 +331,7 @@ public class DogController : Agent {
     private void addTarget(ActionSegment<float> continuousActionsOut, ArticulationBody body, float angle) {
         for (int i = 0; i < limits.Count; ++i) {
             if(limits[i].bodyIndex == body.index) {
-                continuousActionsOut[i] += angle;
+                continuousActionsOut[i] += angle * 0.01f;
             }
         }
     }

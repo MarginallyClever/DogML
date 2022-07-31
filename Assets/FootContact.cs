@@ -3,13 +3,13 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class FootContact : MonoBehaviour {
-    private GameObject cube;
     public bool inContact;
+    private MeshRenderer meshRenderer;
 
     // Start is called before the first frame update
     void Start() {
-        cube = gameObject;
         inContact = false;
+        meshRenderer = gameObject.GetComponent<MeshRenderer>();
     }
 
     // Update is called once per frame
@@ -24,6 +24,6 @@ public class FootContact : MonoBehaviour {
                 inContact = true;
             }
         }
-        cube.GetComponent<MeshRenderer>().material.color = color;
+        meshRenderer.material.color = color;
     }
 }
