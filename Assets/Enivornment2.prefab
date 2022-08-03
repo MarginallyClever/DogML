@@ -2296,10 +2296,11 @@ MonoBehaviour:
   standingUpReward: 1
   horizontalMovementReward: 0.2
   jointSpeed: 90
-  costOfEnergy: 0
+  costOfEnergy: 0.001
   idealStandingHeight: 3.25
   upLowPass: 0
   heightLowPass: 0.5
+  targetEpsilon: 0.5
   jointScale: 3.14159
 --- !u!114 &790631422848439764
 MonoBehaviour:

@@ -209,6 +209,7 @@ public class DogController : Agent {
 
     public float upLowPass = 0;
     public float heightLowPass = 0.5f;
+    public float targetEpsilon = 0.2f;
     /**
      * Reward should be a value [-1,1]
      */
@@ -251,7 +252,7 @@ public class DogController : Agent {
             float movingTowardsTarget = Vector3.Dot(vn, dn);
             AddReward(movingTowardsTarget);
 
-            if (diff.magnitude < 0.1) {
+            if (diff.magnitude < targetEpsilon) {
                 // reached target!
                 AddReward(100);
                 MoveWalkTarget();
