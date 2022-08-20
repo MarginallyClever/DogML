@@ -1,0 +1,51 @@
+# https://github.com/Unity-Technologies/ml-agents/blob/main/docs/Training-Configuration-File.md
+
+behaviors:
+  Roll Over and Stand Up:
+    trainer_type: ppo
+    keep_checkpoints: 5
+    max_steps: 20000000
+    time_horizon: 1000
+    summary_freq: 30000
+    checkpoint_interval: 500000
+
+    hyperparameters:
+      batch_size: 2048
+      buffer_size: 20480
+      learning_rate: 0.0003
+      beta: 0.005
+      epsilon: 0.3
+      lambd: 0.95
+      num_epoch: 5
+      learning_rate_schedule: constant
+
+    network_settings:
+      normalize: false
+      hidden_units: 512
+      num_layers: 4
+      vis_encode_type: simple
+      #conditioning_type: none
+
+      #memory:
+      #  sequence_length: 32 # how long the sequences of experiences must be while training
+      #  memory_size: 256  # the size of the memory the agent must keep
+
+    reward_signals:
+      extrinsic:
+        strength: 1.0
+        gamma: 0.995
+
+      #gail: 
+      #  strength: 0.5
+      #  demo_path: ../Demos/RollOverAndStand.demo
+
+      curiosity:
+        strength: 0.02
+        gamma: 0.995
+        learning_rate: 3.0e-4
+
+    #behavioral_cloning:
+      #strength: 0.5
+      #demo_path: ../Demos/RollOverAndStand.demo
+      #steps: 5000
+      #samples_per_update: 0

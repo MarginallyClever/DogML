@@ -41,6 +41,10 @@ public class DogController : Agent {
     // actual standing height is ~3.55.  lowering this a little
     public float idealStandingHeight = 3.25f;
 
+    public float upLowPass = 0;
+    public float heightLowPass = 0.5f;
+    public float targetEpsilon = 0.2f;
+
     private void Start() {
         for (int i = 0; i < legs.Length; ++i) {
             legs[i] = new DogLeg();
@@ -154,7 +158,7 @@ public class DogController : Agent {
             Vector3 p2 = Torso.transform.InverseTransformPoint(limits[i].obj.transform.position);
             sensor.AddObservation(p2);
         }
-
+        
         List<float> positions = new List<float>();
         Torso.GetJointPositions(positions);
 
@@ -184,7 +188,6 @@ public class DogController : Agent {
         Vector3 whichWayIsUp = Torso.transform.InverseTransformDirection(new Vector3(0,1,0));
         sensor.AddObservation(whichWayIsUp);
 
-
         Vector3 localVelocity = Torso.transform.InverseTransformDirection(Torso.velocity);
         sensor.AddObservation(localVelocity.normalized);
         sensor.AddObservation(Mathf.Clamp(localVelocity.magnitude,0f,10f)/10.0f);
@@ -195,7 +198,17 @@ public class DogController : Agent {
         // direction to target
         var diff = walkTarget.transform.position - Torso.transform.position;
         var localDiff = Torso.transform.InverseTransformDirection(diff);
-        sensor.AddObservation(localDiff);
+        var dn = diff.normalized;
+        sensor.AddObservation(dn);
+
+        var vn = Torso.velocity.normalized;
+        float movingTowardsTarget = Vector3.Dot(vn, dn);
+        sensor.AddObservation(movingTowardsTarget);
+
+        float m = diff.magnitude;
+        sensor.AddObservation(Mathf.Min(1f, m));
+        sensor.AddObservation(Mathf.Min(10f,m) / 10f);
+        sensor.AddObservation(Mathf.Min(100f,m) / 100f);
     }
 
     private void FixedUpdate() {
@@ -207,14 +220,10 @@ public class DogController : Agent {
         // leaves the island.
     }
 
-    public float upLowPass = 0;
-    public float heightLowPass = 0.5f;
-    public float targetEpsilon = 0.2f;
     /**
      * Reward should be a value [-1,1]
      */
     private void CalculateReward() {
-        
         // is it facing up?
         float up = GetFacingUp() * facingUpReward;
         //Debug.Log(up);
@@ -223,27 +232,27 @@ public class DogController : Agent {
         float height = (Mathf.Min(GetHeight(), idealStandingHeight) / idealStandingHeight) * standingUpReward;
         SetReward(up * height);
         
-
         if (costOfEnergy>0) MakeEnergyUseExpensive();
 
         {
             // is it moving?
-            Vector3 v = transform.InverseTransformDirection(Torso.velocity);
-            v.y = 0;
-            float horizontalSpeed = v.magnitude;
+            //Vector3 v = transform.InverseTransformDirection(Torso.velocity);
+            //v.y = 0;
+            //float horizontalSpeed = v.magnitude;
 
             // punish fast vertical movements to prevent jumping?
             //float verticalSpeed = 1.0f - Mathf.Abs(Torso.velocity.y);
-            float speedScore = horizontalSpeed * horizontalMovementReward;
+            //float speedScore = horizontalSpeed * horizontalMovementReward;
 
             // Debug.Log(up+"\t"+height+"\t"+horizontalSpeed);
-            AddReward(speedScore);
+            //AddReward(speedScore);
         }
 
-        if(up> upLowPass && height> heightLowPass) {
+        //if(up> upLowPass && height> heightLowPass) 
+        {
             var diff = walkTarget.transform.position - Torso.transform.position;
-            var dn = Vector3.Normalize(diff);
-            var vn = Vector3.Normalize(Torso.velocity);
+            var dn = diff.normalized;
+            var vn = Torso.velocity.normalized;
             var fn = Torso.transform.forward;
 
             float facingTarget = Vector3.Dot(fn, dn);
@@ -251,6 +260,11 @@ public class DogController : Agent {
 
             float movingTowardsTarget = Vector3.Dot(vn, dn);
             AddReward(movingTowardsTarget);
+
+            float m = diff.magnitude;
+            AddReward(1.0f - Mathf.Min(100f, m) / 100f);  // warmer...
+            AddReward(1.0f - Mathf.Min(10f, m) / 10f);  // hotter...
+            AddReward(1.0f - Mathf.Min(1f, m));  // boiling!
 
             if (diff.magnitude < targetEpsilon) {
                 // reached target!
@@ -277,8 +291,6 @@ public class DogController : Agent {
         AddReward(-energyUsed * costOfEnergy);
 
     }
-
-    public float jointScale = 1;
 
     public override void OnActionReceived(ActionBuffers actions) {
         lastCommands.Clear();

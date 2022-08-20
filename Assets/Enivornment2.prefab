@@ -60,8 +60,8 @@ ArticulationBody:
   m_XDrive:
     lowerLimit: -110
     upperLimit: 90
-    stiffness: 500
-    damping: 125
+    stiffness: 1500
+    damping: 375
     forceLimit: 3.402823e+38
     target: 0
     targetVelocity: 0
@@ -165,8 +165,8 @@ ArticulationBody:
   m_XDrive:
     lowerLimit: -160
     upperLimit: 0
-    stiffness: 500
-    damping: 125
+    stiffness: 1500
+    damping: 375
     forceLimit: 3.402823e+38
     target: 0
     targetVelocity: 0
@@ -368,8 +368,8 @@ ArticulationBody:
   m_XDrive:
     lowerLimit: -90
     upperLimit: 90
-    stiffness: 500
-    damping: 125
+    stiffness: 1500
+    damping: 375
     forceLimit: 3.402823e+38
     target: 0
     targetVelocity: 0
@@ -600,8 +600,8 @@ ArticulationBody:
   m_XDrive:
     lowerLimit: -15
     upperLimit: 105
-    stiffness: 500
-    damping: 125
+    stiffness: 1500
+    damping: 375
     forceLimit: 3.402823e+38
     target: 0
     targetVelocity: 0
@@ -832,8 +832,8 @@ ArticulationBody:
   m_XDrive:
     lowerLimit: -90
     upperLimit: 90
-    stiffness: 500
-    damping: 125
+    stiffness: 1500
+    damping: 375
     forceLimit: 3.402823e+38
     target: 0
     targetVelocity: 0
@@ -1355,8 +1355,8 @@ ArticulationBody:
   m_XDrive:
     lowerLimit: -15
     upperLimit: 105
-    stiffness: 500
-    damping: 125
+    stiffness: 1500
+    damping: 375
     forceLimit: 3.402823e+38
     target: 0
     targetVelocity: 0
@@ -1461,8 +1461,8 @@ ArticulationBody:
   m_XDrive:
     lowerLimit: -15
     upperLimit: 105
-    stiffness: 500
-    damping: 125
+    stiffness: 1500
+    damping: 375
     forceLimit: 3.402823e+38
     target: 0
     targetVelocity: 0
@@ -1843,8 +1843,8 @@ ArticulationBody:
   m_XDrive:
     lowerLimit: -160
     upperLimit: 0
-    stiffness: 500
-    damping: 125
+    stiffness: 1500
+    damping: 375
     forceLimit: 3.402823e+38
     target: 0
     targetVelocity: 0
@@ -2077,8 +2077,8 @@ ArticulationBody:
   m_XDrive:
     lowerLimit: -160
     upperLimit: 0
-    stiffness: 500
-    damping: 125
+    stiffness: 1500
+    damping: 375
     forceLimit: 3.402823e+38
     target: 0
     targetVelocity: 0
@@ -2259,7 +2259,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_BrainParameters:
-    VectorObservationSize: 72
+    VectorObservationSize: 76
     NumStackedVectorObservations: 3
     m_ActionSpec:
       m_NumContinuousActions: 12
@@ -2268,7 +2268,7 @@ MonoBehaviour:
     VectorActionDescriptions: []
     VectorActionSpaceType: 1
     hasUpgradedBrainParametersWithActionSpec: 1
-  m_Model: {fileID: 5022602860645237092, guid: 9ef9e9a06c32032449674d887f425615, type: 3}
+  m_Model: {fileID: 0}
   m_InferenceDevice: 0
   m_BehaviorType: 0
   m_BehaviorName: Roll Over and Stand Up
@@ -2292,8 +2292,8 @@ MonoBehaviour:
     maxStep: 0
   hasUpgradedFromAgentParameters: 1
   MaxStep: 2000
-  facingUpReward: 1
-  standingUpReward: 1
+  facingUpReward: 2
+  standingUpReward: 3
   horizontalMovementReward: 0.2
   jointSpeed: 90
   costOfEnergy: 0.001
@@ -2301,7 +2301,6 @@ MonoBehaviour:
   upLowPass: 0
   heightLowPass: 0.5
   targetEpsilon: 0.5
-  jointScale: 3.14159
 --- !u!114 &790631422848439764
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2489,8 +2488,8 @@ ArticulationBody:
   m_XDrive:
     lowerLimit: -15
     upperLimit: 105
-    stiffness: 500
-    damping: 125
+    stiffness: 1500
+    damping: 375
     forceLimit: 3.402823e+38
     target: 0
     targetVelocity: 0
@@ -2777,8 +2776,8 @@ ArticulationBody:
   m_XDrive:
     lowerLimit: -110
     upperLimit: 90
-    stiffness: 500
-    damping: 125
+    stiffness: 1500
+    damping: 375
     forceLimit: 3.402823e+38
     target: 0
     targetVelocity: 0
@@ -3278,8 +3277,8 @@ ArticulationBody:
   m_XDrive:
     lowerLimit: -160
     upperLimit: 0
-    stiffness: 500
-    damping: 125
+    stiffness: 1500
+    damping: 375
     forceLimit: 3.402823e+38
     target: 0
     targetVelocity: 0
