@@ -26,23 +26,23 @@ behaviors:
       vis_encode_type: simple
       #conditioning_type: none
 
-      memory:
-        sequence_length: 32 # how long the sequences of experiences must be while training
-        memory_size: 1024  # the size of the memory the agent must keep
+      #memory:
+      #  sequence_length: 32 # how long the sequences of experiences must be while training
+      #  memory_size: 256  # the size of the memory the agent must keep
 
     reward_signals:
       extrinsic:
         strength: 1.0
-        gamma: 0.995
+        gamma: 0.95
 
       #gail: 
       #  strength: 0.5
       #  demo_path: ../Demos/RollOverAndStand.demo
 
-      #curiosity:
-      #  strength: 0.02
-      #  gamma: 0.995
-      #  learning_rate: 3.0e-4
+      curiosity:
+        strength: 0.02
+        gamma: 0.995
+        learning_rate: 3.0e-4
 
     #behavioral_cloning:
       #strength: 0.5

@@ -6,5 +6,7 @@ class DogLeg {
     public ArticulationBody Shoulder;
     public ArticulationBody Thigh;
     public ArticulationBody Calf;
-    public FootContact Foot;
+
+    public ColorContact ThighContact;
+    public ColorContact FootContact;
 };

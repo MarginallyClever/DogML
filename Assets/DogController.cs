@@ -23,8 +23,7 @@ public class DogController : Agent {
     private ArticulationBody Head;
 
     private DogLeg[] legs = new DogLeg[4];
-
-    private float startTime;
+    private ColorContact TorsoContact;
 
     private List<float> jointTargets = new List<float>();
     private List<int> jointIndexes = new List<int>();
@@ -44,6 +43,8 @@ public class DogController : Agent {
     public float upLowPass = 0;
     public float heightLowPass = 0.5f;
     public float targetEpsilon = 0.2f;
+
+    public float startDistance = 0f;
 
     private void Start() {
         for (int i = 0; i < legs.Length; ++i) {
@@ -76,6 +77,7 @@ public class DogController : Agent {
         Torso = torsoCopy.GetComponent<ArticulationBody>();
         if (Torso == null) Debug.LogError("no torso model found.");
 
+        TorsoContact = Torso.GetComponent<ColorContact>();
 
         Torso.GetDriveTargets(jointTargets);
         //Debug.Log("list = " + string.Join(", ", jointTargets));
@@ -89,8 +91,11 @@ public class DogController : Agent {
 
         for (int i = 0; i < legs.Length; ++i) {
             legs[i].Thigh = legs[i].Shoulder.transform.Find("Thigh").GetComponent<ArticulationBody>();
+            legs[i].ThighContact = legs[i].Thigh.GetComponent<ColorContact>();
+
             legs[i].Calf = legs[i].Thigh.transform.Find("Calf").GetComponent<ArticulationBody>();
-            legs[i].Foot = legs[i].Calf.transform.Find("Calf Model").GetComponent<FootContact>();
+            legs[i].FootContact = legs[i].Calf.GetComponent<ColorContact>();
+
             //if (legs[i].Shoulder == null) Debug.LogError("Shoulder " + i + " not found.");
             //if (legs[i].Thigh    == null) Debug.LogError("Thigh " + i + " not found.");
             //if (legs[i].Calf     == null) Debug.LogError("Calf " + i + " not found.");
@@ -113,7 +118,8 @@ public class DogController : Agent {
 
         MoveWalkTarget();
 
-        startTime = Time.time;
+        var diff = walkTarget.transform.position - Torso.transform.position;
+        startDistance = diff.magnitude;
     }
 
     internal void SetSelectedMaterial(Material selectedMaterial) {
@@ -179,8 +185,10 @@ public class DogController : Agent {
         //}
         //sensor.AddObservation(lastCommands);
 
+        sensor.AddObservation(TorsoContact.inContact);
         for (int i = 0; i < legs.Length; ++i) {
-            sensor.AddObservation(legs[i].Foot.inContact ? 1 : 0);
+            sensor.AddObservation(legs[i].ThighContact.inContact);
+            sensor.AddObservation(legs[i].FootContact.inContact);
         }
 
         sensor.AddObservation(Mathf.Min(GetHeight(), idealStandingHeight) / idealStandingHeight);
@@ -199,16 +207,15 @@ public class DogController : Agent {
         var diff = walkTarget.transform.position - Torso.transform.position;
         var localDiff = Torso.transform.InverseTransformDirection(diff);
         var dn = diff.normalized;
+        //sensor.AddObservation(diff);
         sensor.AddObservation(dn);
 
-        var vn = Torso.velocity.normalized;
-        float movingTowardsTarget = Vector3.Dot(vn, dn);
-        sensor.AddObservation(movingTowardsTarget);
+        //var vn = Torso.velocity.normalized;
+        //float movingTowardsTarget = Vector3.Dot(vn, dn);
+        //sensor.AddObservation(movingTowardsTarget);
 
         float m = diff.magnitude;
-        sensor.AddObservation(Mathf.Min(1f, m));
-        sensor.AddObservation(Mathf.Min(10f,m) / 10f);
-        sensor.AddObservation(Mathf.Min(100f,m) / 100f);
+        sensor.AddObservation(m);
     }
 
     private void FixedUpdate() {
@@ -248,7 +255,7 @@ public class DogController : Agent {
             //AddReward(speedScore);
         }
 
-        //if(up> upLowPass && height> heightLowPass) 
+        if(up> upLowPass && height> heightLowPass) 
         {
             var diff = walkTarget.transform.position - Torso.transform.position;
             var dn = diff.normalized;
@@ -262,23 +269,27 @@ public class DogController : Agent {
             AddReward(movingTowardsTarget);
 
             float m = diff.magnitude;
-            AddReward(1.0f - Mathf.Min(100f, m) / 100f);  // warmer...
-            AddReward(1.0f - Mathf.Min(10f, m) / 10f);  // hotter...
-            AddReward(1.0f - Mathf.Min(1f, m));  // boiling!
+            if (startDistance > targetEpsilon) {
+                AddReward(Mathf.Max(0,startDistance - m));  // hotter the closer you get!
+            } else {
+                MoveWalkTarget();
+                return;
+            }
 
             if (diff.magnitude < targetEpsilon) {
                 // reached target!
                 AddReward(100);
-                MoveWalkTarget();
+                EndEpisode();
             }
         }
     }
 
+    // at 40 units apart they should never bump into each other.
     private void MoveWalkTarget() {
         walkTarget.transform.position = new Vector3(
-        Random.Range(-50, 50),
+        Torso.transform.position.x + Random.Range(-15f, 15f),
         walkTarget.transform.position.y,
-        Random.Range(-50, 50)
+        Torso.transform.position.z + Random.Range(-15f, 15f)
         );
     }
 

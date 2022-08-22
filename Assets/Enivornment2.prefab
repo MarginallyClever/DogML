@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 5675103826388355462}
   - component: {fileID: 100504268411213608}
   - component: {fileID: 1913135956526535424}
+  - component: {fileID: 6475313258978441116}
   m_Layer: 0
   m_Name: Thigh
   m_TagString: Untagged
@@ -60,8 +61,8 @@ ArticulationBody:
   m_XDrive:
     lowerLimit: -110
     upperLimit: 90
-    stiffness: 1500
-    damping: 375
+    stiffness: 1000
+    damping: 100
     forceLimit: 3.402823e+38
     target: 0
     targetVelocity: 0
@@ -94,7 +95,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 303666400826879344}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ac36ef306c7c6664db51479ed2995afb, type: 3}
   m_Name: 
@@ -106,6 +107,19 @@ MonoBehaviour:
   distance: 2
   startColor: {r: 1, g: 1, b: 1, a: 1}
   endColor: {r: 1, g: 1, b: 1, a: 1}
+--- !u!114 &6475313258978441116
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 303666400826879344}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b976b7383b41fdf4e9b991c1d3d1b663, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  inContact: 0
 --- !u!1 &1083246960958291335
 GameObject:
   m_ObjectHideFlags: 0
@@ -117,6 +131,7 @@ GameObject:
   - component: {fileID: 178801443534699663}
   - component: {fileID: 7154043570544361938}
   - component: {fileID: 3928224437791056620}
+  - component: {fileID: 7488325411778012142}
   m_Layer: 0
   m_Name: Calf
   m_TagString: Untagged
@@ -165,8 +180,8 @@ ArticulationBody:
   m_XDrive:
     lowerLimit: -160
     upperLimit: 0
-    stiffness: 1500
-    damping: 375
+    stiffness: 1000
+    damping: 100
     forceLimit: 3.402823e+38
     target: 0
     targetVelocity: 0
@@ -199,7 +214,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1083246960958291335}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ac36ef306c7c6664db51479ed2995afb, type: 3}
   m_Name: 
@@ -211,6 +226,19 @@ MonoBehaviour:
   distance: 2
   startColor: {r: 1, g: 1, b: 1, a: 1}
   endColor: {r: 1, g: 1, b: 1, a: 1}
+--- !u!114 &7488325411778012142
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1083246960958291335}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b976b7383b41fdf4e9b991c1d3d1b663, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  inContact: 0
 --- !u!1 &1275350936106608532
 GameObject:
   m_ObjectHideFlags: 0
@@ -319,6 +347,7 @@ GameObject:
   - component: {fileID: 5420494561158637444}
   - component: {fileID: 6882302403339401501}
   - component: {fileID: 9182213254647700225}
+  - component: {fileID: 1544541109498392402}
   m_Layer: 0
   m_Name: Thigh
   m_TagString: Untagged
@@ -368,8 +397,8 @@ ArticulationBody:
   m_XDrive:
     lowerLimit: -90
     upperLimit: 90
-    stiffness: 1500
-    damping: 375
+    stiffness: 1000
+    damping: 100
     forceLimit: 3.402823e+38
     target: 0
     targetVelocity: 0
@@ -402,7 +431,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1615169848531859830}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ac36ef306c7c6664db51479ed2995afb, type: 3}
   m_Name: 
@@ -414,6 +443,19 @@ MonoBehaviour:
   distance: 2
   startColor: {r: 1, g: 1, b: 1, a: 1}
   endColor: {r: 1, g: 1, b: 1, a: 1}
+--- !u!114 &1544541109498392402
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1615169848531859830}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b976b7383b41fdf4e9b991c1d3d1b663, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  inContact: 0
 --- !u!1 &1701399134582314339
 GameObject:
   m_ObjectHideFlags: 0
@@ -427,7 +469,6 @@ GameObject:
   - component: {fileID: 927722670424395727}
   - component: {fileID: 6769221855711871088}
   - component: {fileID: 1475363104114689295}
-  - component: {fileID: 5192418218315567566}
   m_Layer: 0
   m_Name: Calf Model
   m_TagString: Untagged
@@ -527,19 +568,6 @@ CapsuleCollider:
   m_Height: 8
   m_Direction: 1
   m_Center: {x: 0, y: 0, z: 0}
---- !u!114 &5192418218315567566
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1701399134582314339}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b976b7383b41fdf4e9b991c1d3d1b663, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  inContact: 0
 --- !u!1 &1753504192133039054
 GameObject:
   m_ObjectHideFlags: 0
@@ -600,8 +628,8 @@ ArticulationBody:
   m_XDrive:
     lowerLimit: -15
     upperLimit: 105
-    stiffness: 1500
-    damping: 375
+    stiffness: 1000
+    damping: 100
     forceLimit: 3.402823e+38
     target: 0
     targetVelocity: 0
@@ -634,7 +662,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1753504192133039054}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ac36ef306c7c6664db51479ed2995afb, type: 3}
   m_Name: 
@@ -659,7 +687,6 @@ GameObject:
   - component: {fileID: 5916991095872163969}
   - component: {fileID: 225650448611690332}
   - component: {fileID: 3709774487160583683}
-  - component: {fileID: 7739696485350944675}
   m_Layer: 0
   m_Name: Calf Model
   m_TagString: Untagged
@@ -759,19 +786,6 @@ CapsuleCollider:
   m_Height: 8
   m_Direction: 1
   m_Center: {x: 0, y: 0, z: 0}
---- !u!114 &7739696485350944675
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1910062361412051522}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b976b7383b41fdf4e9b991c1d3d1b663, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  inContact: 0
 --- !u!1 &2453577357525860708
 GameObject:
   m_ObjectHideFlags: 0
@@ -783,6 +797,7 @@ GameObject:
   - component: {fileID: 4328832705976243317}
   - component: {fileID: 8600258543223201914}
   - component: {fileID: 5922978458668433861}
+  - component: {fileID: 2737787387717736868}
   m_Layer: 0
   m_Name: Thigh
   m_TagString: Untagged
@@ -832,8 +847,8 @@ ArticulationBody:
   m_XDrive:
     lowerLimit: -90
     upperLimit: 90
-    stiffness: 1500
-    damping: 375
+    stiffness: 1000
+    damping: 100
     forceLimit: 3.402823e+38
     target: 0
     targetVelocity: 0
@@ -866,7 +881,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2453577357525860708}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ac36ef306c7c6664db51479ed2995afb, type: 3}
   m_Name: 
@@ -878,6 +893,19 @@ MonoBehaviour:
   distance: 2
   startColor: {r: 1, g: 1, b: 1, a: 1}
   endColor: {r: 1, g: 1, b: 1, a: 1}
+--- !u!114 &2737787387717736868
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2453577357525860708}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b976b7383b41fdf4e9b991c1d3d1b663, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  inContact: 0
 --- !u!1 &2797437480652685191
 GameObject:
   m_ObjectHideFlags: 0
@@ -1085,7 +1113,6 @@ GameObject:
   - component: {fileID: 9018853143070059530}
   - component: {fileID: 3454505737932200386}
   - component: {fileID: 8009244160086172629}
-  - component: {fileID: 1933425088840614864}
   m_Layer: 0
   m_Name: Calf Model
   m_TagString: Untagged
@@ -1185,19 +1212,6 @@ CapsuleCollider:
   m_Height: 8
   m_Direction: 1
   m_Center: {x: 0, y: 0, z: 0}
---- !u!114 &1933425088840614864
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3808584912965660406}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b976b7383b41fdf4e9b991c1d3d1b663, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  inContact: 0
 --- !u!1 &4233280502349417864
 GameObject:
   m_ObjectHideFlags: 0
@@ -1355,8 +1369,8 @@ ArticulationBody:
   m_XDrive:
     lowerLimit: -15
     upperLimit: 105
-    stiffness: 1500
-    damping: 375
+    stiffness: 1000
+    damping: 100
     forceLimit: 3.402823e+38
     target: 0
     targetVelocity: 0
@@ -1389,7 +1403,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4252617044891395678}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ac36ef306c7c6664db51479ed2995afb, type: 3}
   m_Name: 
@@ -1461,8 +1475,8 @@ ArticulationBody:
   m_XDrive:
     lowerLimit: -15
     upperLimit: 105
-    stiffness: 1500
-    damping: 375
+    stiffness: 1000
+    damping: 100
     forceLimit: 3.402823e+38
     target: 0
     targetVelocity: 0
@@ -1495,7 +1509,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5569005838680159891}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ac36ef306c7c6664db51479ed2995afb, type: 3}
   m_Name: 
@@ -1795,6 +1809,7 @@ GameObject:
   - component: {fileID: 6103115393762414960}
   - component: {fileID: 8702637213718998076}
   - component: {fileID: 4107512381833381075}
+  - component: {fileID: 6358270538910275586}
   m_Layer: 0
   m_Name: Calf
   m_TagString: Untagged
@@ -1843,8 +1858,8 @@ ArticulationBody:
   m_XDrive:
     lowerLimit: -160
     upperLimit: 0
-    stiffness: 1500
-    damping: 375
+    stiffness: 1000
+    damping: 100
     forceLimit: 3.402823e+38
     target: 0
     targetVelocity: 0
@@ -1877,7 +1892,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8281233546251323483}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ac36ef306c7c6664db51479ed2995afb, type: 3}
   m_Name: 
@@ -1889,6 +1904,19 @@ MonoBehaviour:
   distance: 2
   startColor: {r: 1, g: 1, b: 1, a: 1}
   endColor: {r: 1, g: 1, b: 1, a: 1}
+--- !u!114 &6358270538910275586
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8281233546251323483}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b976b7383b41fdf4e9b991c1d3d1b663, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  inContact: 0
 --- !u!1 &8491281026686073592
 GameObject:
   m_ObjectHideFlags: 0
@@ -2029,6 +2057,7 @@ GameObject:
   - component: {fileID: 8504986972431349138}
   - component: {fileID: 8504986972431349141}
   - component: {fileID: 821844319957632025}
+  - component: {fileID: 8130536122542263997}
   m_Layer: 0
   m_Name: Calf
   m_TagString: Untagged
@@ -2077,8 +2106,8 @@ ArticulationBody:
   m_XDrive:
     lowerLimit: -160
     upperLimit: 0
-    stiffness: 1500
-    damping: 375
+    stiffness: 1000
+    damping: 100
     forceLimit: 3.402823e+38
     target: 0
     targetVelocity: 0
@@ -2111,7 +2140,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8504986972431349139}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ac36ef306c7c6664db51479ed2995afb, type: 3}
   m_Name: 
@@ -2123,6 +2152,19 @@ MonoBehaviour:
   distance: 2
   startColor: {r: 1, g: 1, b: 1, a: 1}
   endColor: {r: 1, g: 1, b: 1, a: 1}
+--- !u!114 &8130536122542263997
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8504986972431349139}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b976b7383b41fdf4e9b991c1d3d1b663, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  inContact: 0
 --- !u!1 &8504986972891303048
 GameObject:
   m_ObjectHideFlags: 0
@@ -2259,8 +2301,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_BrainParameters:
-    VectorObservationSize: 76
-    NumStackedVectorObservations: 3
+    VectorObservationSize: 78
+    NumStackedVectorObservations: 2
     m_ActionSpec:
       m_NumContinuousActions: 12
       BranchSizes: 
@@ -2301,6 +2343,7 @@ MonoBehaviour:
   upLowPass: 0
   heightLowPass: 0.5
   targetEpsilon: 0.5
+  startDistance: 0
 --- !u!114 &790631422848439764
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2488,8 +2531,8 @@ ArticulationBody:
   m_XDrive:
     lowerLimit: -15
     upperLimit: 105
-    stiffness: 1500
-    damping: 375
+    stiffness: 1000
+    damping: 100
     forceLimit: 3.402823e+38
     target: 0
     targetVelocity: 0
@@ -2522,7 +2565,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8504986973266982030}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ac36ef306c7c6664db51479ed2995afb, type: 3}
   m_Name: 
@@ -2727,6 +2770,7 @@ GameObject:
   - component: {fileID: 8504986973707537779}
   - component: {fileID: 8504986973707537778}
   - component: {fileID: 2376157295077154048}
+  - component: {fileID: 4878130949681521631}
   m_Layer: 0
   m_Name: Thigh
   m_TagString: Untagged
@@ -2776,8 +2820,8 @@ ArticulationBody:
   m_XDrive:
     lowerLimit: -110
     upperLimit: 90
-    stiffness: 1500
-    damping: 375
+    stiffness: 1000
+    damping: 100
     forceLimit: 3.402823e+38
     target: 0
     targetVelocity: 0
@@ -2810,7 +2854,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8504986973707537776}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ac36ef306c7c6664db51479ed2995afb, type: 3}
   m_Name: 
@@ -2822,6 +2866,19 @@ MonoBehaviour:
   distance: 2
   startColor: {r: 1, g: 1, b: 1, a: 1}
   endColor: {r: 1, g: 1, b: 1, a: 1}
+--- !u!114 &4878130949681521631
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8504986973707537776}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b976b7383b41fdf4e9b991c1d3d1b663, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  inContact: 0
 --- !u!1 &8504986973766756870
 GameObject:
   m_ObjectHideFlags: 0
@@ -2834,7 +2891,6 @@ GameObject:
   - component: {fileID: 8504986973766756987}
   - component: {fileID: 2469226845334625350}
   - component: {fileID: 4088241478717910944}
-  - component: {fileID: 4814591907315909108}
   m_Layer: 0
   m_Name: Calf Model
   m_TagString: Untagged
@@ -2921,19 +2977,6 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8504986973766756870}
   m_Mesh: {fileID: -2432090755550338912, guid: b1c8381e6ff63f5438731ce3365febe3, type: 3}
---- !u!114 &4814591907315909108
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8504986973766756870}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b976b7383b41fdf4e9b991c1d3d1b663, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  inContact: 0
 --- !u!1 &8504986973897299622
 GameObject:
   m_ObjectHideFlags: 0
@@ -3138,6 +3181,7 @@ GameObject:
   m_Component:
   - component: {fileID: 8504986974233040145}
   - component: {fileID: 8504986974233040144}
+  - component: {fileID: 1227024317847872044}
   m_Layer: 0
   m_Name: Torso
   m_TagString: Untagged
@@ -3218,6 +3262,19 @@ ArticulationBody:
   m_Immovable: 0
   m_UseGravity: 1
   m_CollisionDetectionMode: 1
+--- !u!114 &1227024317847872044
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8504986974233040158}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b976b7383b41fdf4e9b991c1d3d1b663, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  inContact: 0
 --- !u!1 &9033296012832470458
 GameObject:
   m_ObjectHideFlags: 0
@@ -3229,6 +3286,7 @@ GameObject:
   - component: {fileID: 241536808119261972}
   - component: {fileID: 1789045721097746463}
   - component: {fileID: 5139211250362576964}
+  - component: {fileID: 2397422234016652612}
   m_Layer: 0
   m_Name: Calf
   m_TagString: Untagged
@@ -3277,8 +3335,8 @@ ArticulationBody:
   m_XDrive:
     lowerLimit: -160
     upperLimit: 0
-    stiffness: 1500
-    damping: 375
+    stiffness: 1000
+    damping: 100
     forceLimit: 3.402823e+38
     target: 0
     targetVelocity: 0
@@ -3311,7 +3369,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 9033296012832470458}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ac36ef306c7c6664db51479ed2995afb, type: 3}
   m_Name: 
@@ -3323,3 +3381,16 @@ MonoBehaviour:
   distance: 2
   startColor: {r: 1, g: 1, b: 1, a: 1}
   endColor: {r: 1, g: 1, b: 1, a: 1}
+--- !u!114 &2397422234016652612
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9033296012832470458}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b976b7383b41fdf4e9b991c1d3d1b663, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  inContact: 0

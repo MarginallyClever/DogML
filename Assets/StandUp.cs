@@ -29,7 +29,7 @@ public class StandUp : MonoBehaviour {
         for (int i = 0; i < legs.Length; ++i) {
             legs[i].Thigh = legs[i].Shoulder.transform.Find("Thigh").GetComponent<ArticulationBody>();
             legs[i].Calf = legs[i].Thigh.transform.Find("Calf").GetComponent<ArticulationBody>();
-            legs[i].Foot = legs[i].Calf.transform.Find("Foot/Foot Model").GetComponent<FootContact>();
+            legs[i].FootContact = legs[i].Calf.transform.Find("Foot/Foot Model").GetComponent<ColorContact>();
 
         }
 
