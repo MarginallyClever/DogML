@@ -42,9 +42,9 @@ public class DogController : Agent {
 
     public float upLowPass = 0;
     public float heightLowPass = 0.5f;
-    public float targetEpsilon = 0.2f;
+    public float targetEpsilon = 0.5f;
 
-    public float startDistance = 0f;
+    private float startDistance = 0f;
 
     private void Start() {
         for (int i = 0; i < legs.Length; ++i) {
@@ -156,6 +156,10 @@ public class DogController : Agent {
         return Torso.transform.position.y;
     }
 
+    private float GetHeightScoreNormalized() {
+        return Mathf.Min(GetHeight(), idealStandingHeight) / idealStandingHeight;
+    }
+
     /**
      * Each 'observation' should be a value [-1,1]
      */
@@ -191,7 +195,7 @@ public class DogController : Agent {
             sensor.AddObservation(legs[i].FootContact.inContact);
         }
 
-        sensor.AddObservation(Mathf.Min(GetHeight(), idealStandingHeight) / idealStandingHeight);
+        sensor.AddObservation(GetHeightScoreNormalized());
 
         Vector3 whichWayIsUp = Torso.transform.InverseTransformDirection(new Vector3(0,1,0));
         sensor.AddObservation(whichWayIsUp);
@@ -234,31 +238,15 @@ public class DogController : Agent {
      */
     private void CalculateReward() {
         // is it facing up?
-        float up = GetFacingUp() * facingUpReward;
-        //Debug.Log(up);
+        float up = GetFacingUp();
 
         // is it standing?
-        float height = (Mathf.Min(GetHeight(), idealStandingHeight) / idealStandingHeight) * standingUpReward;
-        SetReward(up * height);
+        float height = GetHeightScoreNormalized();
+        SetReward(up * facingUpReward * height * standingUpReward);
         
         if (costOfEnergy>0) MakeEnergyUseExpensive();
 
-        {
-            // is it moving?
-            //Vector3 v = transform.InverseTransformDirection(Torso.velocity);
-            //v.y = 0;
-            //float horizontalSpeed = v.magnitude;
-
-            // punish fast vertical movements to prevent jumping?
-            //float verticalSpeed = 1.0f - Mathf.Abs(Torso.velocity.y);
-            //float speedScore = horizontalSpeed * horizontalMovementReward;
-
-            // Debug.Log(up+"\t"+height+"\t"+horizontalSpeed);
-            //AddReward(speedScore);
-        }
-
-        if(up> upLowPass && height> heightLowPass) 
-        {
+        if(up> upLowPass && height> heightLowPass) {
             var diff = walkTarget.transform.position - Torso.transform.position;
             var dn = diff.normalized;
             var vn = Torso.velocity.normalized;
@@ -289,9 +277,9 @@ public class DogController : Agent {
     // at 40 units apart they should never bump into each other.
     private void MoveWalkTarget() {
         walkTarget.transform.position = new Vector3(
-        Torso.transform.position.x + Random.Range(-15f, 15f),
-        walkTarget.transform.position.y,
-        Torso.transform.position.z + Random.Range(-15f, 15f)
+            Torso.transform.position.x + Random.Range(-15f, 15f),
+            walkTarget.transform.position.y,
+            Torso.transform.position.z + Random.Range(-15f, 15f)
         );
     }
 

@@ -1,5 +1,5 @@
 # https://github.com/Unity-Technologies/ml-agents/blob/main/docs/Training-Configuration-File.md
-
+# 3.402823e+38 is FLOAT_MAX
 behaviors:
   Roll Over and Stand Up:
     trainer_type: ppo
