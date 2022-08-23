@@ -26,9 +26,9 @@ behaviors:
       vis_encode_type: simple
       #conditioning_type: none
 
-      #memory:
-      #  sequence_length: 32 # how long the sequences of experiences must be while training
-      #  memory_size: 256  # the size of the memory the agent must keep
+      memory:
+        sequence_length: 64  # how long the sequences of experiences must be while training
+        memory_size: 128  # the size of the memory the agent must keep
 
     reward_signals:
       extrinsic:
