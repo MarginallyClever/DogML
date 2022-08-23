@@ -210,12 +210,14 @@ public class DogController : Agent {
         //sensor.AddObservation(diff);
         sensor.AddObservation(dn);
 
-        //var vn = Torso.velocity.normalized;
-        //float movingTowardsTarget = Vector3.Dot(vn, dn);
-        //sensor.AddObservation(movingTowardsTarget);
+        var vn = Torso.velocity.normalized;
+        float movingTowardsTarget = Vector3.Dot(vn, dn);
+        sensor.AddObservation(movingTowardsTarget);
 
         float m = diff.magnitude;
-        sensor.AddObservation(m);
+        sensor.AddObservation(Math.Max(1f,m));
+        sensor.AddObservation(Math.Max(10f, m)/10f);
+        sensor.AddObservation(Math.Max(100f, m)/100f);
     }
 
     private void FixedUpdate() {

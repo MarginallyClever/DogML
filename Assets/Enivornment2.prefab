@@ -61,7 +61,7 @@ ArticulationBody:
   m_XDrive:
     lowerLimit: -110
     upperLimit: 90
-    stiffness: 1000
+    stiffness: 750
     damping: 100
     forceLimit: 3.402823e+38
     target: 0
@@ -180,7 +180,7 @@ ArticulationBody:
   m_XDrive:
     lowerLimit: -160
     upperLimit: 0
-    stiffness: 1000
+    stiffness: 750
     damping: 100
     forceLimit: 3.402823e+38
     target: 0
@@ -397,7 +397,7 @@ ArticulationBody:
   m_XDrive:
     lowerLimit: -90
     upperLimit: 90
-    stiffness: 1000
+    stiffness: 750
     damping: 100
     forceLimit: 3.402823e+38
     target: 0
@@ -628,7 +628,7 @@ ArticulationBody:
   m_XDrive:
     lowerLimit: -15
     upperLimit: 105
-    stiffness: 1000
+    stiffness: 750
     damping: 100
     forceLimit: 3.402823e+38
     target: 0
@@ -847,7 +847,7 @@ ArticulationBody:
   m_XDrive:
     lowerLimit: -90
     upperLimit: 90
-    stiffness: 1000
+    stiffness: 750
     damping: 100
     forceLimit: 3.402823e+38
     target: 0
@@ -1369,7 +1369,7 @@ ArticulationBody:
   m_XDrive:
     lowerLimit: -15
     upperLimit: 105
-    stiffness: 1000
+    stiffness: 750
     damping: 100
     forceLimit: 3.402823e+38
     target: 0
@@ -1475,7 +1475,7 @@ ArticulationBody:
   m_XDrive:
     lowerLimit: -15
     upperLimit: 105
-    stiffness: 1000
+    stiffness: 750
     damping: 100
     forceLimit: 3.402823e+38
     target: 0
@@ -1858,7 +1858,7 @@ ArticulationBody:
   m_XDrive:
     lowerLimit: -160
     upperLimit: 0
-    stiffness: 1000
+    stiffness: 750
     damping: 100
     forceLimit: 3.402823e+38
     target: 0
@@ -2106,7 +2106,7 @@ ArticulationBody:
   m_XDrive:
     lowerLimit: -160
     upperLimit: 0
-    stiffness: 1000
+    stiffness: 750
     damping: 100
     forceLimit: 3.402823e+38
     target: 0
@@ -2301,7 +2301,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_BrainParameters:
-    VectorObservationSize: 78
+    VectorObservationSize: 81
     NumStackedVectorObservations: 2
     m_ActionSpec:
       m_NumContinuousActions: 12
@@ -2531,7 +2531,7 @@ ArticulationBody:
   m_XDrive:
     lowerLimit: -15
     upperLimit: 105
-    stiffness: 1000
+    stiffness: 750
     damping: 100
     forceLimit: 3.402823e+38
     target: 0
@@ -2820,7 +2820,7 @@ ArticulationBody:
   m_XDrive:
     lowerLimit: -110
     upperLimit: 90
-    stiffness: 1000
+    stiffness: 750
     damping: 100
     forceLimit: 3.402823e+38
     target: 0
@@ -3335,7 +3335,7 @@ ArticulationBody:
   m_XDrive:
     lowerLimit: -160
     upperLimit: 0
-    stiffness: 1000
+    stiffness: 750
     damping: 100
     forceLimit: 3.402823e+38
     target: 0
